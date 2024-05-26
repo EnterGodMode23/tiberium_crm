@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [ 
+        {
+            "name": "tiberium_crm",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "tiberium_crm (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "tiberium_crm (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}
