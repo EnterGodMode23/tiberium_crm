@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:tiberium_crm/features/app/routing/app_router.dart';
 
 @RoutePage()
-class SplashPage extends StatelessWidget {
-  const SplashPage({super.key});
+class RootPage extends StatelessWidget {
+  const RootPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +22,10 @@ class SplashPage extends StatelessWidget {
             BottomNavigationBarItem(
               label: 'Profile',
               icon: Icon(Icons.person_2_outlined),
+              activeIcon: Icon(
+                Icons.person_2_rounded,
+                color: Colors.black,
+              ),
             ),
             BottomNavigationBarItem(
               label: 'Home',
