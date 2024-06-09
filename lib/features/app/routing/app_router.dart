@@ -1,0 +1,19 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:tiberium_crm/features/home/home_screen.dart';
+import 'package:tiberium_crm/features/profile/profile_screen.dart';
+import 'package:tiberium_crm/features/schedule/schedule_screen.dart';
+import 'package:tiberium_crm/features/splash/splash_screen.dart';
+
+part 'app_router.gr.dart';
+
+@AutoRouterConfig(replaceInRouteName: 'Page,Route')
+class AppRouter extends _$AppRouter {
+  @override
+  List<AutoRoute> get routes => [
+        AutoRoute(page: SplashRoute.page, initial: true, children: [
+          AutoRoute(page: HomeRoute.page, initial: true),
+          AutoRoute(page: ProfileRoute.page),
+          AutoRoute(page: ScheduleRoute.page),
+        ])
+      ];
+}
