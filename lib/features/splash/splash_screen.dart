@@ -30,10 +30,18 @@ class RootPage extends StatelessWidget {
             BottomNavigationBarItem(
               label: 'Home',
               icon: Icon(Icons.home_outlined),
+              activeIcon: Icon(
+                Icons.home,
+                color: Colors.black,
+              ),
             ),
             BottomNavigationBarItem(
               label: 'Schedule',
               icon: Icon(Icons.calendar_month_outlined),
+              activeIcon: Icon(
+                Icons.calendar_month,
+                color: Colors.black,
+              ),
             ),
           ],
         );

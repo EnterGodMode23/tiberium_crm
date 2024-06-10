@@ -3,6 +3,12 @@ import 'package:flutter/services.dart';
 
 class Themes {
   static final light = ThemeData(
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      showSelectedLabels: false,
+      showUnselectedLabels: false,
+      selectedItemColor: Colors.black,
+      selectedLabelStyle: TextStyle(color: Colors.black),
+    ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
         textStyle: const WidgetStatePropertyAll(
