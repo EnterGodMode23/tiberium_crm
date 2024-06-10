@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 class Themes {
   static final light = ThemeData(
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      backgroundColor: Colors.white,
       showSelectedLabels: false,
       showUnselectedLabels: false,
       selectedItemColor: Colors.black,
