@@ -96,5 +96,19 @@ class Themes {
     ),
     splashFactory: InkSparkle.constantTurbulenceSeedSplashFactory,
     datePickerTheme: const DatePickerThemeData(),
+    textTheme: const TextTheme(
+      headlineMedium: TextStyle(
+        fontFamily: 'SFUI',
+        fontSize: 48,
+        fontWeight: FontWeight.w400,
+        color: Colors.black,
+      ),
+      bodyMedium: TextStyle(
+        fontFamily: 'SFUI',
+        fontSize: 26,
+        fontWeight: FontWeight.w400,
+        color: Colors.black,
+      ),
+    ),
   );
 }

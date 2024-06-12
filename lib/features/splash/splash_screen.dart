@@ -10,8 +10,8 @@ class RootPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return AutoTabsScaffold(
       routes: const [
-        HomeRoute(),
         ScheduleRoute(),
+        HomeRoute(),
         ProfileRoute(),
       ],
       bottomNavigationBuilder: (_, tabsRouter) {
@@ -20,10 +20,10 @@ class RootPage extends StatelessWidget {
           onTap: tabsRouter.setActiveIndex,
           items: const [
             BottomNavigationBarItem(
-              label: 'Profile',
-              icon: Icon(Icons.person_2_outlined),
+              label: 'Schedule',
+              icon: Icon(Icons.calendar_month_outlined),
               activeIcon: Icon(
-                Icons.person_2_rounded,
+                Icons.calendar_month,
                 color: Colors.black,
               ),
             ),
@@ -36,10 +36,10 @@ class RootPage extends StatelessWidget {
               ),
             ),
             BottomNavigationBarItem(
-              label: 'Schedule',
-              icon: Icon(Icons.calendar_month_outlined),
+              label: 'Profile',
+              icon: Icon(Icons.person_2_outlined),
               activeIcon: Icon(
-                Icons.calendar_month,
+                Icons.person_2_rounded,
                 color: Colors.black,
               ),
             ),
@@ -49,6 +49,3 @@ class RootPage extends StatelessWidget {
     );
   }
 }
-
-// body: Center(
-//           child: Image(image: AssetImage('assets/splash_screen.png')),
