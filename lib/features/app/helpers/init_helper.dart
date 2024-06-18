@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:tiberium_crm/features/app/di.dart';
 
 mixin InitHelper {
   static Future<void> init() async {
     WidgetsFlutterBinding.ensureInitialized();
     
     _setSystemUiMode();
+    initializeDI();
   }
 
   static void _setSystemUiMode() {
