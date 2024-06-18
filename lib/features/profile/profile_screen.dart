@@ -1,7 +1,9 @@
 import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:tiberium_crm/data/models/person.dart';
 import 'package:tiberium_crm/data/user_role.dart';
+import 'package:tiberium_crm/features/app/routing/app_router.dart';
 import 'package:tiberium_crm/features/profile/widgets/person_info.dart';
 import 'package:tiberium_crm/features/profile/widgets/profile_button.dart';
 
@@ -27,7 +29,9 @@ class ProfilePage extends StatelessWidget {
       bottomNavigationBar: BottomAppBar(
         color: Colors.white,
         child: InkWell(
-          onTap: () {},
+          onTap: () {
+            AutoRouter.of(context).replaceAll([const AuthRoute()]);
+          },
           child: const Center(
             child: Text(
               'Log out',
@@ -61,12 +65,14 @@ class ProfilePage extends StatelessWidget {
               children: [
                 InkWell(
                   onTap: () {},
-                  child: ProfileButton('Support', 'assets/support_icon.svg'),
+                  child:
+                      const ProfileButton('Support', 'assets/support_icon.svg'),
                 ),
                 const SizedBox(height: 8),
                 InkWell(
                   onTap: () {},
-                  child: ProfileButton('Language', 'assets/language_icon.svg'),
+                  child: const ProfileButton(
+                      'Language', 'assets/language_icon.svg'),
                 ),
               ],
             ),
