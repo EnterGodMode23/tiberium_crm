@@ -6,7 +6,7 @@ class Person {
   final String photoLink;
   final String id;
 
-  Person({
+  const Person({
     required this.fio,
     required this.role,
     required this.photoLink,

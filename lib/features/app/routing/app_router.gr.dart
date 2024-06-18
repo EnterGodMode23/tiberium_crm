@@ -45,6 +45,16 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const SchedulePage(),
       );
     },
+    TaskRoute.name: (routeData) {
+      final args = routeData.argsAs<TaskRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: TaskPage(
+          task: args.task,
+          key: args.key,
+        ),
+      );
+    },
   };
 }
 
@@ -116,4 +126,41 @@ class ScheduleRoute extends PageRouteInfo<void> {
   static const String name = 'ScheduleRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [TaskPage]
+class TaskRoute extends PageRouteInfo<TaskRouteArgs> {
+  TaskRoute({
+    required Task task,
+    Key? key,
+    List<PageRouteInfo>? children,
+  }) : super(
+          TaskRoute.name,
+          args: TaskRouteArgs(
+            task: task,
+            key: key,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'TaskRoute';
+
+  static const PageInfo<TaskRouteArgs> page = PageInfo<TaskRouteArgs>(name);
+}
+
+class TaskRouteArgs {
+  const TaskRouteArgs({
+    required this.task,
+    this.key,
+  });
+
+  final Task task;
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'TaskRouteArgs{task: $task, key: $key}';
+  }
 }

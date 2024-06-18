@@ -2,8 +2,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:tiberium_crm/features/home/home_screen.dart';
 import 'package:tiberium_crm/features/profile/profile_screen.dart';
 import 'package:tiberium_crm/features/schedule/schedule_screen.dart';
+import 'package:tiberium_crm/features/schedule/widgets/task_page.dart';
 import 'package:tiberium_crm/features/splash/splash_screen.dart';
 import 'package:tiberium_crm/features/auth/auth_screen.dart';
+import 'package:tiberium_crm/data/models/task.dart';
+import 'package:flutter/material.dart';
 
 part 'app_router.gr.dart';
 
@@ -28,5 +31,6 @@ class AppRouter extends _$AppRouter {
             AutoRoute(page: ScheduleRoute.page),
           ],
         ),
+        AdaptiveRoute(page: TaskRoute.page)
       ];
 }
