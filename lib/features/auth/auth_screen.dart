@@ -66,7 +66,7 @@ class _AuthPageState extends State<AuthPage> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
-                        labelText: 'Sms code',
+                        labelText: 'SMS code',
                       ),
                       validator: FormBuilderValidators.compose(
                         [
@@ -96,7 +96,7 @@ class _AuthPageState extends State<AuthPage> {
                         context: context,
                         builder: (BuildContext context) {
                           return const AlertDialog(
-                            title: Text('Uncorrect number or sms code'),
+                            title: Text('Incorrect number or sms code'),
                           );
                         },
                       );

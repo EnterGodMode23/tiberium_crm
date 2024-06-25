@@ -1,6 +1,9 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../app.dart';
 
 class AuthInterceptor extends Interceptor {
 
@@ -16,9 +19,10 @@ class AuthInterceptor extends Interceptor {
   }
 
   @override
-  void onResponse(Response response, ResponseInterceptorHandler handler) {
+  void onResponse(Response response, ResponseInterceptorHandler handler) async{
     response.data = jsonDecode(response.data);
     super.onResponse(response, handler);
+    App.localStorage.setString('user', jsonEncode(response.data['data']['user']));
     print('data - ${response.data}');
   }
 

@@ -8,6 +8,8 @@ class User {
   String? role;
   String? firstName;
   String? lastName;
+  String? photoLink = '';
+
 
   User({
     this.uid,
@@ -18,7 +20,7 @@ class User {
     this.email,
     this.role,
     this.firstName,
-    this.lastName,
+    this.lastName
   });
 
   User.fromJson(Map<String, dynamic> json) {
