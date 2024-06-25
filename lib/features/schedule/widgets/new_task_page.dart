@@ -93,7 +93,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
                           ),
                         ),
                         Expanded(
-                          flex: 1,
+                          flex: 2,
                           child: FormBuilderTextField(
                             name: 'destination',
                             keyboardType: TextInputType.text,
@@ -118,7 +118,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
                           ),
                         ),
                         Expanded(
-                          flex: 1,
+                          flex: 2,
                           child: FormBuilderTextField(
                             name: 'Priority',
                             keyboardType: TextInputType.text,
@@ -137,7 +137,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
                   ],
                 ),
               ),
-              Spacer(),
+              const Spacer(),
               ElevatedButton(
                 style: Theme.of(context).elevatedButtonTheme.style,
                 onPressed: () async {
