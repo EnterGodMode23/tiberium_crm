@@ -1,18 +1,20 @@
 import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
+import 'package:tiberium_crm/app.dart';
 import 'package:tiberium_crm/features/schedule/widgets/task_entry.dart';
 import '../../data/models/teststuff.dart' as t;
-// import 'package:tiberium_crm/data/models/person.dart';
-// import 'package:tiberium_crm/data/user_role.dart';
 import '../../data/models/task.dart';
 
 @RoutePage()
 class SchedulePage extends StatelessWidget {
   final List<Task> tasks = t.tasks;
+
   const SchedulePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+
+    final currRole = App.localStorage.getString('role') ?? '';
     return Scaffold(
         appBar: AppBar(
           title: Align(
@@ -26,19 +28,37 @@ class SchedulePage extends StatelessWidget {
             ),
           ),
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                alignment: FractionalOffset.topLeft,
-                padding: const EdgeInsets.all(12),
-                child: const Text('Assigned tasks:'),
-              ),
-              for (Task task in tasks)
-                TaskEntry( task: task,)
-            ],
+        body: Stack(children: [
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  alignment: FractionalOffset.topLeft,
+                  padding: const EdgeInsets.all(12),
+                  child: const Text('Assigned tasks:'),
+                ),
+                for (Task task in tasks)
+                  TaskEntry(
+                    task: task,
+                  ),
+                const Padding(padding: EdgeInsets.all(30)),
+              ],
+            ),
           ),
-        )
-    );
+          if (currRole == 'HARVEST_MANAGER' ||
+              currRole == 'PROCESSING_MANAGER')
+          Container(
+            alignment: Alignment.bottomCenter,
+            padding: const EdgeInsets.all(16),
+            child: ElevatedButton(
+              style: Theme.of(context).elevatedButtonTheme.style,
+              onPressed: () {},
+              child: const Text(
+                'New',
+                style: TextStyle(color: Colors.black87, fontSize: 32),
+              ),
+            ),
+          ),
+        ]));
   }
 }

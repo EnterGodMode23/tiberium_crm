@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:tiberium_crm/app.dart';
 import '../../../data/models/task.dart';
 
 @RoutePage()
@@ -13,9 +14,18 @@ class TaskPage extends StatefulWidget {
 
   @override
   State<TaskPage> createState() => _TaskPageState();
+
 }
 
 class _TaskPageState extends State<TaskPage> {
+  late final String currRole;
+
+  @override
+  void initState(){
+    currRole = App.localStorage.getString('role') ?? '';
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,7 +118,8 @@ class _TaskPageState extends State<TaskPage> {
                       'Priority:',
                     ),
                   ),
-                  Expanded(flex: 1, child: Text(widget.task.priority.toString())),
+                  Expanded(
+                      flex: 1, child: Text(widget.task.priority.toString())),
                 ],
               ),
               const Padding(padding: EdgeInsets.all(12)),
@@ -123,6 +134,19 @@ class _TaskPageState extends State<TaskPage> {
                   Expanded(flex: 1, child: Text(widget.task.creationDate)),
                 ],
               ),
+              const Padding(padding: EdgeInsets.all(20)),
+              if (currRole == 'HARVEST_OPERATOR' ||
+                  currRole == 'PROCESSING_OPERATOR')
+                ElevatedButton(
+                  style: Theme.of(context).elevatedButtonTheme.style,
+                  onPressed: () {},
+                  child: const Text(
+                    'Accept Task',
+                    style: TextStyle(color: Colors.black87,
+                    fontSize: 32),
+                  ),
+                ),
+
             ],
           ),
         ),

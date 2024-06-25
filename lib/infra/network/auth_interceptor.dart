@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../app.dart';
 
@@ -23,6 +22,7 @@ class AuthInterceptor extends Interceptor {
     response.data = jsonDecode(response.data);
     super.onResponse(response, handler);
     App.localStorage.setString('user', jsonEncode(response.data['data']['user']));
+    App.localStorage.setString('role', response.data['data']['user']['role']);
     print('data - ${response.data}');
   }
 
