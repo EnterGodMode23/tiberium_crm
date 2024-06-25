@@ -1,6 +1,8 @@
 import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:tiberium_crm/app.dart';
+import 'package:tiberium_crm/features/app/routing/app_router.dart';
 import 'package:tiberium_crm/features/schedule/widgets/task_entry.dart';
 import '../../data/models/teststuff.dart' as t;
 import '../../data/models/task.dart';
@@ -52,7 +54,9 @@ class SchedulePage extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: ElevatedButton(
               style: Theme.of(context).elevatedButtonTheme.style,
-              onPressed: () {},
+              onPressed: () {
+                AutoRouter.of(context).navigate(const NewTaskRoute());
+              },
               child: const Text(
                 'New',
                 style: TextStyle(color: Colors.black87, fontSize: 32),
