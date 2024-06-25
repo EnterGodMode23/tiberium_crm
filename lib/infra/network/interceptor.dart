@@ -8,9 +8,7 @@ class LoggingInterceptor extends Interceptor {
   LoggingInterceptor(this.authHeader);
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    final bytes = utf8.encode(authHeader);
-    final base64Str = base64.encode(bytes);
-    options.headers['Authorization'] = 'Basic $base64Str';
+    options.headers['Authorization'] = 'Bearer $authHeader';
     options.headers['Content-Type'] = Headers.jsonContentType;
     options.responseType = ResponseType.plain;
     options.validateStatus = (status) {

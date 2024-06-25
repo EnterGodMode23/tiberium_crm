@@ -2,7 +2,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tiberium_crm/app.dart';
+import 'package:tiberium_crm/data/models/user.dart';
+import 'package:tiberium_crm/repos/repository.dart';
 
 @RoutePage()
 class NewTaskPage extends StatefulWidget {
@@ -17,11 +21,15 @@ class NewTaskPage extends StatefulWidget {
 class _NewTaskPageState extends State<NewTaskPage> {
   late final String currRole;
   late final GlobalKey<FormBuilderState> _taskFormKey;
+  final SharedPreferences localStorage = GetIt.I.get();
+
+  List<DropdownMenuItem<User>>? users = [];
 
   @override
   void initState() {
     _taskFormKey = GlobalKey();
-    currRole = App.localStorage.getString('role') ?? '';
+    currRole = localStorage.getString('role') ?? '';
+    _getOperators();
     super.initState();
   }
 
@@ -58,24 +66,21 @@ class _NewTaskPageState extends State<NewTaskPage> {
                     ),
                     Row(
                       children: [
-                        const Expanded(
-                          flex: 1,
-                          child: Text(
-                            'Operator:',
-                          ),
-                        ),
                         Expanded(
-                          flex: 2,
-                          child: FormBuilderTextField(
-                            name: 'operator',
-                            keyboardType: TextInputType.text,
+                          flex: 1,
+                          child: FormBuilderDropdown(
+                            name: 'user',
+                            borderRadius: BorderRadius.circular(14),
                             decoration: const InputDecoration(
-                              labelText: 'UID',
+                              labelText: 'Workers',
+                              border: InputBorder.none,
                             ),
+                            items: users ?? [],
+                            onChanged: (value) => {},
                             validator: FormBuilderValidators.compose(
                               [
                                 FormBuilderValidators.required(
-                                  errorText: 'Enter the operator\'s UID',
+                                  errorText: 'Choose worker',
                                 ),
                               ],
                             ),
@@ -155,5 +160,22 @@ class _NewTaskPageState extends State<NewTaskPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _getOperators() async {
+    final rep = GetIt.I.get<Repository>();
+    final list = await rep.getUsers();
+
+    final items = list.users?.map((user) {
+      return DropdownMenuItem(
+        value: user,
+        child: Text('${user.firstName}  ${user.lastName}'),
+      );
+    }).toList();
+    if (mounted) {
+      setState(() {
+        users = items;
+      });
+    }
   }
 }

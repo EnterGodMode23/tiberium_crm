@@ -3,11 +3,12 @@ import 'dart:convert';
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tiberium_crm/features/app/routing/app_router.dart';
 import 'package:tiberium_crm/features/profile/widgets/profile_button.dart';
 import 'package:tiberium_crm/features/profile/widgets/user_info.dart';
 
-import '../../app.dart';
 import '../../data/models/user.dart';
 
 @RoutePage()
@@ -15,9 +16,10 @@ class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
+    final SharedPreferences localStorage = GetIt.I.get();
     // TODO: get user for the whole app from home screen
-    final user = User.fromJson(jsonDecode(App.localStorage.getString('user')!));
+    final user = User.fromJson(jsonDecode(localStorage.getString('user')!));
     return Scaffold(
       appBar: AppBar(
         title: Align(
@@ -35,7 +37,7 @@ class ProfilePage extends StatelessWidget {
         color: Colors.white,
         child: InkWell(
           onTap: () {
-            App.localStorage.clear();
+            localStorage.clear();
             AutoRouter.of(context).replaceAll([const AuthRoute()]);
           },
           child: const Center(
@@ -55,8 +57,7 @@ class ProfilePage extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
-            child: UserInfo(user
-            ),
+            child: UserInfo(user),
           ),
           const SizedBox(height: 32),
           Padding(

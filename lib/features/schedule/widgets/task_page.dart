@@ -1,5 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tiberium_crm/app.dart';
 import '../../../data/models/task.dart';
 
@@ -14,15 +16,15 @@ class TaskPage extends StatefulWidget {
 
   @override
   State<TaskPage> createState() => _TaskPageState();
-
 }
 
 class _TaskPageState extends State<TaskPage> {
   late final String currRole;
+  final SharedPreferences localStorage = GetIt.I.get();
 
   @override
-  void initState(){
-    currRole = App.localStorage.getString('role') ?? '';
+  void initState() {
+    currRole = localStorage.getString('role') ?? '';
     super.initState();
   }
 
@@ -142,11 +144,9 @@ class _TaskPageState extends State<TaskPage> {
                   onPressed: () {},
                   child: const Text(
                     'Accept Task',
-                    style: TextStyle(color: Colors.black87,
-                    fontSize: 32),
+                    style: TextStyle(color: Colors.black87, fontSize: 32),
                   ),
                 ),
-
             ],
           ),
         ),

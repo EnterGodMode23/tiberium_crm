@@ -24,12 +24,15 @@ class _TaskEntryState extends State<TaskEntry> {
       },
       child: Column(children: [
         const Divider(color: Colors.black87),
-        Row(
-          children: [
-            Expanded(flex: 1, child: Text(widget.task.priority.toString())),
-            Expanded(flex: 2, child: Text(widget.task.destination)),
-            Expanded(flex: 2, child: Text(widget.task.operator.fio)),
-          ],
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            children: [
+              Expanded(flex: 1, child: Text(widget.task.priority.toString())),
+              Expanded(flex: 2, child: Text(widget.task.destination)),
+              Expanded(flex: 2, child: Text(widget.task.operator.fio)),
+            ],
+          ),
         ),
         const Divider(color: Colors.black87),
       ]),

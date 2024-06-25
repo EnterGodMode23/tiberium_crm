@@ -1,14 +1,14 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-
-import '../../app.dart';
+import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthInterceptor extends Interceptor {
+  final SharedPreferences localStorage = GetIt.I.get();
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-
     options.headers['Content-Type'] = Headers.jsonContentType;
     options.responseType = ResponseType.plain;
     options.validateStatus = (status) {
@@ -18,11 +18,12 @@ class AuthInterceptor extends Interceptor {
   }
 
   @override
-  void onResponse(Response response, ResponseInterceptorHandler handler) async{
+  void onResponse(Response response, ResponseInterceptorHandler handler) async {
     response.data = jsonDecode(response.data);
     super.onResponse(response, handler);
-    App.localStorage.setString('user', jsonEncode(response.data['data']['user']));
-    App.localStorage.setString('role', response.data['data']['user']['role']);
+    localStorage.setString('user', jsonEncode(response.data['data']['user']));
+    localStorage.setString('role', response.data['data']['user']['role']);
+    localStorage.setString('token', response.data['data']['access_token']);
     print('data - ${response.data}');
   }
 
