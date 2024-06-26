@@ -2,12 +2,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tiberium_crm/app.dart';
-import '../../../data/models/task.dart';
+import 'package:tiberium_crm/data/models/tasks/harvest_task.dart';
 
 @RoutePage()
 class TaskPage extends StatefulWidget {
-  final Task task;
+  final HarvestTask task;
 
   const TaskPage({
     required this.task,
@@ -58,7 +57,7 @@ class _TaskPageState extends State<TaskPage> {
                       'Task ID:',
                     ),
                     Text(
-                      widget.task.id,
+                      widget.task.uid ?? 'Unknown',
                       style: const TextStyle(color: Colors.grey),
                     ),
                   ],
@@ -72,7 +71,8 @@ class _TaskPageState extends State<TaskPage> {
                       'Type:',
                     ),
                   ),
-                  Expanded(flex: 1, child: Text(widget.task.type.name)),
+                  Expanded(
+                      flex: 1, child: Text(widget.task.runtimeType.toString())),
                 ],
               ),
               const Padding(padding: EdgeInsets.all(12)),
@@ -84,7 +84,7 @@ class _TaskPageState extends State<TaskPage> {
                       'Current status:',
                     ),
                   ),
-                  Expanded(flex: 1, child: Text(widget.task.status.name)),
+                  Expanded(flex: 1, child: Text(widget.task.status ?? 'TO_DO')),
                 ],
               ),
               const Padding(padding: EdgeInsets.all(12)),
@@ -93,10 +93,10 @@ class _TaskPageState extends State<TaskPage> {
                   const Expanded(
                     flex: 1,
                     child: Text(
-                      'Current status:',
+                      'Target Destination:',
                     ),
                   ),
-                  Expanded(flex: 1, child: Text(widget.task.destination)),
+                  Expanded(flex: 1, child: Text(widget.task.destination ?? 'Unknown')),
                 ],
               ),
               const Padding(padding: EdgeInsets.all(12)),
@@ -108,7 +108,10 @@ class _TaskPageState extends State<TaskPage> {
                       'Curator:',
                     ),
                   ),
-                  Expanded(flex: 1, child: Text(widget.task.curator.fio)),
+                  Expanded(
+                      flex: 1,
+                      child: Text('${widget.task.harvestOperator?.firstName} '
+                          '${widget.task.harvestOperator?.lastName}')),
                 ],
               ),
               const Padding(padding: EdgeInsets.all(12)),
@@ -121,7 +124,9 @@ class _TaskPageState extends State<TaskPage> {
                     ),
                   ),
                   Expanded(
-                      flex: 1, child: Text(widget.task.priority.toString())),
+                    flex: 1,
+                    child: Text(widget.task.priority.toString()),
+                  ),
                 ],
               ),
               const Padding(padding: EdgeInsets.all(12)),
@@ -133,7 +138,7 @@ class _TaskPageState extends State<TaskPage> {
                       'Creation date:',
                     ),
                   ),
-                  Expanded(flex: 1, child: Text(widget.task.creationDate)),
+                  Expanded(flex: 1, child: Text(widget.task.created ?? 'Unknown')),
                 ],
               ),
               const Padding(padding: EdgeInsets.all(20)),

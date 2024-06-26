@@ -152,7 +152,7 @@ class ScheduleRoute extends PageRouteInfo<void> {
 /// [TaskPage]
 class TaskRoute extends PageRouteInfo<TaskRouteArgs> {
   TaskRoute({
-    required Task task,
+    required HarvestTask task,
     Key? key,
     List<PageRouteInfo>? children,
   }) : super(
@@ -175,7 +175,7 @@ class TaskRouteArgs {
     this.key,
   });
 
-  final Task task;
+  final HarvestTask task;
 
   final Key? key;
 

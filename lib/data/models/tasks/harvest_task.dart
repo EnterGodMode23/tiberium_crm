@@ -1,5 +1,4 @@
 import 'package:tiberium_crm/data/models/user.dart';
-import 'package:tiberium_crm/data/task_type.dart';
 
 class HarvestTask{
   String? uid;
@@ -9,8 +8,9 @@ class HarvestTask{
   User? harvestManager;
   num? targetKilosToHarvest;
   int? priority;
-  TaskStatus? status;
+  String? status;
   String? mainTaskRef;
+  String? destination;
 
   HarvestTask({
     this.uid,
@@ -22,18 +22,20 @@ class HarvestTask{
     this.priority,
     this.status,
     this.mainTaskRef,
+    this.destination
   });
 
   HarvestTask.fromJson(Map<String, dynamic> json) {
     uid = json['uid'];
     created = json['created'];
     updated = json['updated'];
-    harvestOperator = json['harvest_operator'];
-    harvestManager = json['harvest_manager'];
+    harvestOperator = User.fromJson(json['harvest_operator']);
+    harvestManager = User.fromJson(json['harvest_manager']);
     targetKilosToHarvest = json['target_kilos_to_harvest'];
     priority = json['priority'];
     status = json['status'];
     mainTaskRef = json['main_task_ref'];
+    destination = json['destination'];
   }
 
   Map<String, dynamic> toJson() {
@@ -47,6 +49,7 @@ class HarvestTask{
     data['priority'] = priority;
     data['status'] = status;
     data['main_task_ref'] = mainTaskRef;
+    data['destination'] = destination;
     return data;
   }
 }

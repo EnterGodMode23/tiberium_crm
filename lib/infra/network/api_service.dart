@@ -3,7 +3,7 @@ import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
 import 'package:tiberium_crm/data/models/auth_response.dart';
 import 'package:tiberium_crm/data/models/sms_login_req.dart';
-import 'package:tiberium_crm/data/models/user.dart';
+import 'package:tiberium_crm/data/models/tasks/harvest_task_list.dart';
 import 'package:tiberium_crm/data/models/users_list.dart';
 import 'package:tiberium_crm/infra/network/base/server_urls.dart';
 
@@ -22,4 +22,7 @@ abstract class ApiService {
   Future<UsersList> getUsers({
     @Query('role') required final String role,
   });
+
+  @GET(getHarvestTasksUrl)
+  Future<HarvestTaskList> getHarvestTasks();
 }

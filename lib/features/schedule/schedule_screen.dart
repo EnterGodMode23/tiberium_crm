@@ -5,31 +5,45 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tiberium_crm/features/app/routing/app_router.dart';
 import 'package:tiberium_crm/features/schedule/widgets/task_entry.dart';
-import '../../data/models/teststuff.dart' as t;
-import '../../data/models/task.dart';
+import 'package:tiberium_crm/repos/repository.dart';
 
 @RoutePage()
-class SchedulePage extends StatelessWidget {
-  final List<Task> tasks = t.tasks;
+class SchedulePage extends StatefulWidget {
   const SchedulePage({super.key});
 
   @override
+  State<SchedulePage> createState() => _SchedulePageState();
+}
+
+class _SchedulePageState extends State<SchedulePage> {
+  late final String currRole;
+  final SharedPreferences localStorage = GetIt.I.get();
+  List<TaskEntry>? harvestTasks = [];
+
+  @override
+  void initState() {
+    currRole = localStorage.getString('role') ?? '';
+    _getHarvestTasks();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final currRole = GetIt.I.get<SharedPreferences>().getString('role') ?? '';
     return Scaffold(
-        appBar: AppBar(
-          title: Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Text(
-                'Tasks',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
+      appBar: AppBar(
+        title: Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(
+              'Tasks',
+              style: Theme.of(context).textTheme.headlineMedium,
             ),
           ),
         ),
-        body: Stack(children: [
+      ),
+      body: Stack(
+        children: [
           SingleChildScrollView(
             child: Column(
               children: [
@@ -38,10 +52,12 @@ class SchedulePage extends StatelessWidget {
                   padding: const EdgeInsets.all(12),
                   child: const Text('Assigned tasks:'),
                 ),
-                for (Task task in tasks)
-                  TaskEntry(
-                    task: task,
-                  ),
+                for (TaskEntry task in harvestTasks ?? [])
+                  task,
+                // for (Task task in tasks)
+                //   TaskEntry(
+                //     task: task,
+                //   ),
                 const Padding(padding: EdgeInsets.all(30)),
               ],
             ),
@@ -61,6 +77,21 @@ class SchedulePage extends StatelessWidget {
                 ),
               ),
             ),
-        ]));
+        ],
+      ),
+    );
+  }
+  Future<void> _getHarvestTasks() async {
+    final rep = GetIt.I.get<Repository>();
+    final list = await rep.getHarvestTasks();
+
+    final items = list.harvestTasks?.map((hTask) {
+      return TaskEntry(task: hTask);
+    }).toList();
+    if (mounted) {
+      setState(() {
+        harvestTasks = items;
+      });
+    }
   }
 }
