@@ -6,7 +6,6 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tiberium_crm/app.dart';
 import 'package:tiberium_crm/data/models/user.dart';
-import 'package:tiberium_crm/repos/repository.dart';
 
 @RoutePage()
 class NewTaskPage extends StatefulWidget {
@@ -163,7 +162,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
   }
 
   Future<void> _getOperators() async {
-    final rep = GetIt.I.get<Repository>();
+    final rep = App.repository;
     final list = await rep.getUsers();
 
     final items = list.users?.map((user) {

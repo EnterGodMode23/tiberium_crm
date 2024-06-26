@@ -105,7 +105,7 @@ class _TaskPageState extends State<TaskPage> {
                   const Expanded(
                     flex: 1,
                     child: Text(
-                      'Curator:',
+                      'Operator:',
                     ),
                   ),
                   Expanded(

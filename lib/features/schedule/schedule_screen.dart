@@ -3,9 +3,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tiberium_crm/app.dart';
 import 'package:tiberium_crm/features/app/routing/app_router.dart';
 import 'package:tiberium_crm/features/schedule/widgets/task_entry.dart';
-import 'package:tiberium_crm/repos/repository.dart';
 
 @RoutePage()
 class SchedulePage extends StatefulWidget {
@@ -82,7 +82,7 @@ class _SchedulePageState extends State<SchedulePage> {
     );
   }
   Future<void> _getHarvestTasks() async {
-    final rep = GetIt.I.get<Repository>();
+    final rep = App.repository;
     final list = await rep.getHarvestTasks();
 
     final items = list.harvestTasks?.map((hTask) {

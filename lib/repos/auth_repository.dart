@@ -2,14 +2,11 @@ import 'dart:async';
 
 import 'package:tiberium_crm/data/models/sms_login_req.dart';
 import 'package:tiberium_crm/infra/network/auth_api_service.dart';
-import 'package:get_it/get_it.dart';
 
 class AuthRepository {
-  late final AuthApiService authClient;
+  final AuthApiService authClient;
 
-  AuthRepository() {
-    authClient = GetIt.I.get<AuthApiService>();
-  }
+  AuthRepository(this.authClient);
 
   Future<bool> smsLogin(SmsLoginReq req) async {
     final futureResponse = await authClient.smsLogin(smsLoginReq: req);

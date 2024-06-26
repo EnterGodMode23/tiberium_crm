@@ -6,10 +6,19 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:get_it/get_it.dart';
+import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tiberium_crm/app.dart';
 import 'package:tiberium_crm/data/models/sms_login_req.dart';
 import 'package:tiberium_crm/features/app/routing/app_router.dart';
 import 'package:tiberium_crm/features/app/theme.dart';
+import 'package:tiberium_crm/infra/network/api_service.dart';
+import 'package:tiberium_crm/infra/network/auth_api_service.dart';
+import 'package:tiberium_crm/infra/network/auth_interceptor.dart';
+import 'package:tiberium_crm/infra/network/base/server_urls.dart';
+import 'package:tiberium_crm/infra/network/interceptor.dart';
 import 'package:tiberium_crm/repos/auth_repository.dart';
+import 'package:tiberium_crm/repos/repository.dart';
 
 @RoutePage()
 class AuthPage extends StatefulWidget {
@@ -21,10 +30,11 @@ class AuthPage extends StatefulWidget {
 
 class _AuthPageState extends State<AuthPage> {
   late final GlobalKey<FormBuilderState> _formKey;
-  final rep = GetIt.I.get<AuthRepository>();
+  late final AuthRepository rep;
 
   @override
   void initState() {
+    _authService();
     _formKey = GlobalKey();
     super.initState();
   }
@@ -90,6 +100,7 @@ class _AuthPageState extends State<AuthPage> {
                       ),
                     );
                     if (res) {
+                      _DI();
                       AutoRouter.of(context).replaceAll(const [HomeRoute()]);
                     } else {
                       showDialog(
@@ -114,5 +125,28 @@ class _AuthPageState extends State<AuthPage> {
         ),
       ),
     );
+  }
+  Future<void> _DI() async{
+    GetIt locator = GetIt.instance;
+
+    final header = (locator.get<SharedPreferences>().getString('token') ?? '');
+    App.mainInterceptor = LoggingInterceptor(header);
+    final client = ApiService(
+      Dio(BaseOptions(contentType: 'application/json', baseUrl: host))
+        ..interceptors.add(App.mainInterceptor),
+    );
+
+    final repository = Repository(client);
+    App.repository = repository;
+  }
+
+  Future<void> _authService() async{
+    final authClient = AuthApiService(
+      Dio(BaseOptions(contentType: 'application/json', baseUrl: host))
+        ..interceptors.add(AuthInterceptor()),
+    );
+    App.authAPI = authClient;
+
+    rep = AuthRepository(authClient);
   }
 }
