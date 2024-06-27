@@ -3,6 +3,8 @@ import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
 import 'package:tiberium_crm/data/models/auth_response.dart';
 import 'package:tiberium_crm/data/models/sms_login_req.dart';
+import 'package:tiberium_crm/data/models/create_new_task_req.dart';
+import 'package:tiberium_crm/data/models/tasks/harvest_task.dart';
 import 'package:tiberium_crm/data/models/tasks/harvest_task_list.dart';
 import 'package:tiberium_crm/data/models/users_list.dart';
 import 'package:tiberium_crm/infra/network/base/server_urls.dart';
@@ -23,6 +25,15 @@ abstract class ApiService {
     @Query('role') required final String role,
   });
 
-  @GET(getHarvestTasksUrl)
+  @GET(harvestTasksUrl)
   Future<HarvestTaskList> getHarvestTasks();
+
+  @POST(harvestTasksUrl)
+  Future<HarvestTask> postHarvestTask({
+    @Body() required final CreateNewTaskReq createReq,
+});
+//   @PATCH(harvestTasksUrl)
+//   Future<HarvestTaskList> patchHarvestTasks({
+//     @Body() required final HarvestTask hTask,
+// });
 }

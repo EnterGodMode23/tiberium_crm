@@ -23,12 +23,13 @@ class _SchedulePageState extends State<SchedulePage> {
   @override
   void initState() {
     currRole = localStorage.getString('role') ?? '';
-    _getHarvestTasks();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    //TODO надо вытащить отсюда _getHarvestTasks() и обновлять значения иначе
+    _getHarvestTasks();
     return Scaffold(
       appBar: AppBar(
         title: Align(

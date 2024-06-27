@@ -71,12 +71,13 @@ class _AuthPageState extends State<AuthPage> {
                     const SizedBox(height: 34),
                     FormBuilderTextField(
                       name: 'sms',
+                      obscureText: true,
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
-                        labelText: 'SMS code',
+                        labelText: 'Password',
                       ),
                       validator: FormBuilderValidators.compose(
                         [

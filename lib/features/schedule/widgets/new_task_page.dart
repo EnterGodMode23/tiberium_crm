@@ -5,7 +5,9 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tiberium_crm/app.dart';
+import 'package:tiberium_crm/data/models/create_new_task_req.dart';
 import 'package:tiberium_crm/data/models/user.dart';
+import 'package:tiberium_crm/features/app/routing/app_router.dart';
 
 @RoutePage()
 class NewTaskPage extends StatefulWidget {
@@ -21,6 +23,8 @@ class _NewTaskPageState extends State<NewTaskPage> {
   late final String currRole;
   late final GlobalKey<FormBuilderState> _taskFormKey;
   final SharedPreferences localStorage = GetIt.I.get();
+  final rep = App.repository;
+  late String currUid;
 
   List<DropdownMenuItem<User>>? users = [];
 
@@ -35,6 +39,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
   @override
   Widget build(BuildContext context) {
     return FormBuilder(
+      key: _taskFormKey,
       child: Scaffold(
         appBar: AppBar(
           title: Align(
@@ -75,7 +80,10 @@ class _NewTaskPageState extends State<NewTaskPage> {
                               border: InputBorder.none,
                             ),
                             items: users ?? [],
-                            onChanged: (value) => {},
+                            onChanged: (value)  {
+                              final user = value as User;
+                              currUid = user.uid ?? 'Unknown';
+                            },
                             validator: FormBuilderValidators.compose(
                               [
                                 FormBuilderValidators.required(
@@ -124,7 +132,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
                         Expanded(
                           flex: 2,
                           child: FormBuilderTextField(
-                            name: 'Priority',
+                            name: 'priority',
                             keyboardType: TextInputType.text,
                             validator: FormBuilderValidators.compose(
                               [
@@ -148,9 +156,30 @@ class _NewTaskPageState extends State<NewTaskPage> {
                   if (_taskFormKey.currentState?.saveAndValidate() != true) {
                     return;
                   }
+                  final res = await rep.postHarvestTask(
+                    CreateNewTaskReq(
+                      harvestOperator: currUid,
+                      destination: _taskFormKey.currentState!.value['destination'],
+                      priority: int.parse(_taskFormKey.currentState!.value['priority']),
+                    ),
+                  );
+                  if (res.uid?.isNotEmpty ?? false) {
+                    print(res);
+                    AutoRouter.of(context).navigate(TaskRoute(task: res));
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const AlertDialog(
+                          title: Text('Incorrect input'),
+                        );
+                      },
+                    );
+                    AutoRouter.of(context).navigate(const ScheduleRoute());
+                  }
                 },
                 child: const Text(
-                  'Accept Task',
+                  'Create Task',
                   style: TextStyle(color: Colors.black87, fontSize: 32),
                 ),
               ),

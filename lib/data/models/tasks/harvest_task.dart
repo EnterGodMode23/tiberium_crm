@@ -26,16 +26,31 @@ class HarvestTask{
   });
 
   HarvestTask.fromJson(Map<String, dynamic> json) {
-    uid = json['uid'];
-    created = json['created'];
-    updated = json['updated'];
-    harvestOperator = User.fromJson(json['harvest_operator']);
-    harvestManager = User.fromJson(json['harvest_manager']);
-    targetKilosToHarvest = json['target_kilos_to_harvest'];
-    priority = json['priority'];
-    status = json['status'];
-    mainTaskRef = json['main_task_ref'];
-    destination = json['destination'];
+    //TODO это говно надо убрать, просто с сервера приходит в другом формате на POST
+    if (json['data'] != null) {
+      uid = json['data']['uid'];
+      created = json['data']['created'];
+      updated = json['data']['updated'];
+      harvestOperator = User(firstName: 'Test', lastName: 'Test');
+      harvestManager = null;
+      targetKilosToHarvest = json['data']['target_kilos_to_harvest'];
+      priority = json['data']['priority'];
+      status = json['data']['status'];
+      mainTaskRef = json['data']['main_task_ref'];
+      destination = json['data']['destination'];
+    }
+    else {
+      uid = json['uid'];
+      created = json['created'];
+      updated = json['updated'];
+      harvestOperator = User.fromJson(json['harvest_operator']);
+      harvestManager = User.fromJson(json['harvest_manager']);
+      targetKilosToHarvest = json['target_kilos_to_harvest'];
+      priority = json['priority'];
+      status = json['status'];
+      mainTaskRef = json['main_task_ref'];
+      destination = json['destination'];
+    }
   }
 
   Map<String, dynamic> toJson() {
