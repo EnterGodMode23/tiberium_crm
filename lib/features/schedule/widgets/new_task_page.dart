@@ -166,6 +166,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
                   if (res.uid?.isNotEmpty ?? false) {
                     print(res);
                     AutoRouter.of(context).navigate(TaskRoute(task: res));
+                    AutoRouter.of(context).maybePop(true);
                   } else {
                     showDialog(
                       context: context,
@@ -176,6 +177,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
                       },
                     );
                     AutoRouter.of(context).navigate(const ScheduleRoute());
+                    AutoRouter.of(context).maybePop(false);
                   }
                 },
                 child: const Text(

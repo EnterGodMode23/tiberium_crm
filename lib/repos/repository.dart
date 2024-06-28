@@ -27,6 +27,6 @@ class Repository {
     return resp;
   }
 
-  // Future<HarvestTaskList> patchHarvestTasks() async =>
-  //     await client.patchHarvestTasks(hTask: hTask);
+  Future<HarvestTask> patchHarvestTasks(String uid, String hTask) async =>
+      await client.patchHarvestTasks(id: uid, hTask: hTask);
 }

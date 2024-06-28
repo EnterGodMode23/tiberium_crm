@@ -26,7 +26,7 @@ class HarvestTask{
   });
 
   HarvestTask.fromJson(Map<String, dynamic> json) {
-    //TODO это говно надо убрать, просто с сервера приходит в другом формате на POST
+    // TODO это говно надо убрать, просто с сервера приходит в другом формате на POST
     if (json['data'] != null) {
       uid = json['data']['uid'];
       created = json['data']['created'];
@@ -43,8 +43,13 @@ class HarvestTask{
       uid = json['uid'];
       created = json['created'];
       updated = json['updated'];
-      harvestOperator = User.fromJson(json['harvest_operator']);
-      harvestManager = User.fromJson(json['harvest_manager']);
+      try {
+        harvestOperator = User.fromJson(json['harvest_operator']);
+        harvestManager = User.fromJson(json['harvest_manager']);
+      }catch(e) {
+        harvestOperator = User(firstName: 'Test', lastName: 'Test');
+        harvestManager = null;
+      }
       targetKilosToHarvest = json['target_kilos_to_harvest'];
       priority = json['priority'];
       status = json['status'];

@@ -23,13 +23,12 @@ class _SchedulePageState extends State<SchedulePage> {
   @override
   void initState() {
     currRole = localStorage.getString('role') ?? '';
+    _getHarvestTasks();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    //TODO надо вытащить отсюда _getHarvestTasks() и обновлять значения иначе
-    _getHarvestTasks();
     return Scaffold(
       appBar: AppBar(
         title: Align(
@@ -53,12 +52,7 @@ class _SchedulePageState extends State<SchedulePage> {
                   padding: const EdgeInsets.all(12),
                   child: const Text('Assigned tasks:'),
                 ),
-                for (TaskEntry task in harvestTasks ?? [])
-                  task,
-                // for (Task task in tasks)
-                //   TaskEntry(
-                //     task: task,
-                //   ),
+                for (TaskEntry task in harvestTasks ?? []) task,
                 const Padding(padding: EdgeInsets.all(30)),
               ],
             ),
@@ -70,7 +64,7 @@ class _SchedulePageState extends State<SchedulePage> {
               child: ElevatedButton(
                 style: Theme.of(context).elevatedButtonTheme.style,
                 onPressed: () {
-                  AutoRouter.of(context).navigate(const NewTaskRoute());
+                  _navigateToNewTaskPage(context);
                 },
                 child: const Text(
                   'New',
@@ -82,17 +76,26 @@ class _SchedulePageState extends State<SchedulePage> {
       ),
     );
   }
+
   Future<void> _getHarvestTasks() async {
     final rep = App.repository;
     final list = await rep.getHarvestTasks();
 
     final items = list.harvestTasks?.map((hTask) {
-      return TaskEntry(task: hTask);
+      return TaskEntry(task: hTask, onTaskUpdated: _getHarvestTasks,);
     }).toList();
     if (mounted) {
       setState(() {
         harvestTasks = items;
       });
+    }
+  }
+
+  Future<void> _navigateToNewTaskPage(BuildContext context) async {
+    final result = await AutoRouter.of(context).push(const NewTaskRoute(),);
+
+    if (result == true) {
+      await _getHarvestTasks();
     }
   }
 }

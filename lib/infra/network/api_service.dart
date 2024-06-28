@@ -32,8 +32,9 @@ abstract class ApiService {
   Future<HarvestTask> postHarvestTask({
     @Body() required final CreateNewTaskReq createReq,
 });
-//   @PATCH(harvestTasksUrl)
-//   Future<HarvestTaskList> patchHarvestTasks({
-//     @Body() required final HarvestTask hTask,
-// });
+  @PATCH('$harvestTasksUrl/{uid}')
+  Future<HarvestTask> patchHarvestTasks({
+    @Path('uid') required final String id,
+    @Body() required final String hTask,
+});
 }
