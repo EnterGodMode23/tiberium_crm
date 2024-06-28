@@ -3,10 +3,13 @@ import 'package:tiberium_crm/features/home/home_screen.dart';
 import 'package:tiberium_crm/features/profile/profile_screen.dart';
 import 'package:tiberium_crm/features/schedule/schedule_screen.dart';
 import 'package:tiberium_crm/features/schedule/widgets/task_page.dart';
+import 'package:tiberium_crm/features/schedule/widgets/processing_task_page.dart';
 import 'package:tiberium_crm/features/schedule/widgets/new_task_page.dart';
 import 'package:tiberium_crm/features/splash/splash_screen.dart';
 import 'package:tiberium_crm/features/auth/auth_screen.dart';
 import 'package:tiberium_crm/data/models/tasks/harvest_task.dart';
+import 'package:tiberium_crm/data/models/tasks/processing_task.dart';
+
 
 import 'package:flutter/material.dart';
 
@@ -34,6 +37,7 @@ class AppRouter extends _$AppRouter {
           ],
         ),
         AdaptiveRoute(page: TaskRoute.page),
-        AdaptiveRoute(page: NewTaskRoute.page)
-      ];
+        AdaptiveRoute(page: NewTaskRoute.page),
+        AdaptiveRoute(page: ProcessingTaskRoute.page),
+  ];
 }

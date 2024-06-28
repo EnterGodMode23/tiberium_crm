@@ -7,6 +7,8 @@ import 'package:tiberium_crm/app.dart';
 import 'package:tiberium_crm/features/app/routing/app_router.dart';
 import 'package:tiberium_crm/features/schedule/widgets/task_entry.dart';
 
+import 'widgets/processing_task_entry.dart';
+
 @RoutePage()
 class SchedulePage extends StatefulWidget {
   const SchedulePage({super.key});
@@ -19,11 +21,17 @@ class _SchedulePageState extends State<SchedulePage> {
   late final String currRole;
   final SharedPreferences localStorage = GetIt.I.get();
   List<TaskEntry>? harvestTasks = [];
+  List<ProcessingTaskEntry>? procTasks = [];
 
   @override
   void initState() {
     currRole = localStorage.getString('role') ?? '';
-    _getHarvestTasks();
+    if (currRole == 'HARVEST_OPERATOR' ||
+        currRole == 'HARVEST_MANAGER'){
+      _getHarvestTasks();
+    } else {
+      _getProcessingTasks();
+    }
     super.initState();
   }
 
@@ -53,6 +61,7 @@ class _SchedulePageState extends State<SchedulePage> {
                   child: const Text('Assigned tasks:'),
                 ),
                 for (TaskEntry task in harvestTasks ?? []) task,
+                for (ProcessingTaskEntry task in procTasks ?? []) task,
                 const Padding(padding: EdgeInsets.all(30)),
               ],
             ),
@@ -91,11 +100,29 @@ class _SchedulePageState extends State<SchedulePage> {
     }
   }
 
+  Future<void> _getProcessingTasks() async {
+    final rep = App.repository;
+    final list = await rep.getProcessingTasks();
+
+    final items = list.processingTasks?.map((pTask) {
+      return ProcessingTaskEntry(task: pTask, onTaskUpdated: _getProcessingTasks,);
+    }).toList();
+    if (mounted) {
+      setState(() {
+        procTasks = items;
+      });
+    }
+  }
+
   Future<void> _navigateToNewTaskPage(BuildContext context) async {
     final result = await AutoRouter.of(context).push(const NewTaskRoute(),);
 
     if (result == true) {
-      await _getHarvestTasks();
+      if (currRole == 'HARVEST_MANAGER') {
+        await _getHarvestTasks();
+      } else if (currRole == 'PROCESSING_MANAGER'){
+        await _getProcessingTasks();
+      }
     }
   }
 }

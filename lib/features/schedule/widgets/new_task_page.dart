@@ -5,6 +5,7 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tiberium_crm/app.dart';
+import 'package:tiberium_crm/data/models/create_new_proc_task_req.dart';
 import 'package:tiberium_crm/data/models/create_new_task_req.dart';
 import 'package:tiberium_crm/data/models/user.dart';
 import 'package:tiberium_crm/features/app/routing/app_router.dart';
@@ -156,28 +157,43 @@ class _NewTaskPageState extends State<NewTaskPage> {
                   if (_taskFormKey.currentState?.saveAndValidate() != true) {
                     return;
                   }
-                  final res = await rep.postHarvestTask(
-                    CreateNewTaskReq(
-                      harvestOperator: currUid,
-                      destination: _taskFormKey.currentState!.value['destination'],
-                      priority: int.parse(_taskFormKey.currentState!.value['priority']),
-                    ),
-                  );
-                  if (res.uid?.isNotEmpty ?? false) {
-                    print(res);
-                    AutoRouter.of(context).navigate(TaskRoute(task: res));
-                    AutoRouter.of(context).maybePop(true);
-                  } else {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return const AlertDialog(
-                          title: Text('Incorrect input'),
-                        );
-                      },
+                  if (currRole == 'HARVEST_OPERATOR' ||
+                      currRole == 'HARVEST_MANAGER') {
+                    final res = await rep.postHarvestTask(
+                      CreateNewTaskReq(
+                        harvestOperator: currUid,
+                        destination: _taskFormKey.currentState!
+                            .value['destination'],
+                        priority: int.parse(_taskFormKey.currentState!
+                            .value['priority']),
+                      ),
                     );
-                    AutoRouter.of(context).navigate(const ScheduleRoute());
-                    AutoRouter.of(context).maybePop(false);
+                    if (res.uid?.isNotEmpty ?? false) {
+                      print(res);
+                      AutoRouter.of(context).navigate(TaskRoute(task: res));
+                      AutoRouter.of(context).maybePop(true);
+                    } else{
+                      AutoRouter.of(context).navigate(const ScheduleRoute());
+                      AutoRouter.of(context).maybePop(false);
+                    }
+                  } else {
+                    final res = await rep.postProcessingTask(
+                      CreateNewProcTaskReq(
+                        processingOperator: currUid,
+                        destination: _taskFormKey.currentState!
+                            .value['destination'],
+                        priority: int.parse(_taskFormKey.currentState!
+                            .value['priority'],),
+                      ),
+                    );
+                    if (res.uid?.isNotEmpty ?? false) {
+                      print(res);
+                      AutoRouter.of(context).navigate(ProcessingTaskRoute(task: res));
+                      AutoRouter.of(context).maybePop(true);
+                    } else{
+                      AutoRouter.of(context).navigate(const ScheduleRoute());
+                      AutoRouter.of(context).maybePop(false);
+                    }
                   }
                 },
                 child: const Text(

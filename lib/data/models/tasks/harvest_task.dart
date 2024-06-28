@@ -26,7 +26,7 @@ class HarvestTask{
   });
 
   HarvestTask.fromJson(Map<String, dynamic> json) {
-    // TODO это говно надо убрать, просто с сервера приходит в другом формате на POST
+    // TODO переделать, с сервера приходит в другом формате на POST, можно ближе к processing_task
     if (json['data'] != null) {
       uid = json['data']['uid'];
       created = json['data']['created'];

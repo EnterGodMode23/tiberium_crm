@@ -33,6 +33,16 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const NewTaskPage(),
       );
     },
+    ProcessingTaskRoute.name: (routeData) {
+      final args = routeData.argsAs<ProcessingTaskRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: ProcessingTaskPage(
+          task: args.task,
+          key: args.key,
+        ),
+      );
+    },
     ProfileRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -104,6 +114,44 @@ class NewTaskRoute extends PageRouteInfo<void> {
   static const String name = 'NewTaskRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [ProcessingTaskPage]
+class ProcessingTaskRoute extends PageRouteInfo<ProcessingTaskRouteArgs> {
+  ProcessingTaskRoute({
+    required ProcessingTask task,
+    Key? key,
+    List<PageRouteInfo>? children,
+  }) : super(
+          ProcessingTaskRoute.name,
+          args: ProcessingTaskRouteArgs(
+            task: task,
+            key: key,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'ProcessingTaskRoute';
+
+  static const PageInfo<ProcessingTaskRouteArgs> page =
+      PageInfo<ProcessingTaskRouteArgs>(name);
+}
+
+class ProcessingTaskRouteArgs {
+  const ProcessingTaskRouteArgs({
+    required this.task,
+    this.key,
+  });
+
+  final ProcessingTask task;
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'ProcessingTaskRouteArgs{task: $task, key: $key}';
+  }
 }
 
 /// generated route for

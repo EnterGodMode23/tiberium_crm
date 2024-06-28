@@ -2,10 +2,13 @@
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
 import 'package:tiberium_crm/data/models/auth_response.dart';
+import 'package:tiberium_crm/data/models/create_new_proc_task_req.dart';
 import 'package:tiberium_crm/data/models/sms_login_req.dart';
 import 'package:tiberium_crm/data/models/create_new_task_req.dart';
 import 'package:tiberium_crm/data/models/tasks/harvest_task.dart';
 import 'package:tiberium_crm/data/models/tasks/harvest_task_list.dart';
+import 'package:tiberium_crm/data/models/tasks/processing_task.dart';
+import 'package:tiberium_crm/data/models/tasks/processing_task_list.dart';
 import 'package:tiberium_crm/data/models/users_list.dart';
 import 'package:tiberium_crm/infra/network/base/server_urls.dart';
 
@@ -37,4 +40,17 @@ abstract class ApiService {
     @Path('uid') required final String id,
     @Body() required final String hTask,
 });
+
+  @GET(processingTasksUrl)
+  Future<ProcessingTaskList> getProcessingTasks();
+
+  @POST(processingTasksUrl)
+  Future<ProcessingTask> postProcessingTask({
+    @Body() required final CreateNewProcTaskReq createReq,
+  });
+  @PATCH('$processingTasksUrl/{uid}')
+  Future<ProcessingTask> patchProcessingTasks({
+    @Path('uid') required final String id,
+    @Body() required final String pTask,
+  });
 }
