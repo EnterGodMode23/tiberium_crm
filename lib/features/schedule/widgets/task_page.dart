@@ -2,8 +2,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tiberium_crm/app.dart';
 import 'package:tiberium_crm/data/models/tasks/harvest_task.dart';
+import 'package:tiberium_crm/repos/repository.dart';
 
 @RoutePage()
 class TaskPage extends StatefulWidget {
@@ -21,7 +21,7 @@ class TaskPage extends StatefulWidget {
 class _TaskPageState extends State<TaskPage> {
   late final String currRole;
   final SharedPreferences localStorage = GetIt.I.get();
-  final rep = App.repository;
+  final rep = GetIt.I.get<Repository>();
 
   @override
   void initState() {

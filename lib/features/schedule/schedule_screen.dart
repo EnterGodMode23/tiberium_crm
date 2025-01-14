@@ -3,9 +3,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tiberium_crm/app.dart';
 import 'package:tiberium_crm/features/app/routing/app_router.dart';
 import 'package:tiberium_crm/features/schedule/widgets/task_entry.dart';
+import 'package:tiberium_crm/repos/repository.dart';
 
 @RoutePage()
 class SchedulePage extends StatefulWidget {
@@ -18,6 +18,7 @@ class SchedulePage extends StatefulWidget {
 class _SchedulePageState extends State<SchedulePage> {
   late final String currRole;
   final SharedPreferences localStorage = GetIt.I.get();
+  final rep = GetIt.I.get<Repository>();
   List<TaskEntry>? harvestTasks = [];
 
   @override
@@ -78,21 +79,25 @@ class _SchedulePageState extends State<SchedulePage> {
   }
 
   Future<void> _getHarvestTasks() async {
-    final rep = App.repository;
     final list = await rep.getHarvestTasks();
 
-    final items = list.harvestTasks?.map((hTask) {
-      return TaskEntry(task: hTask, onTaskUpdated: _getHarvestTasks,);
-    }).toList();
+    final items = list.harvestTasks
+        ?.map(
+          (hTask) => TaskEntry(
+            task: hTask,
+            onTaskUpdated: _getHarvestTasks,
+          ),
+        )
+        .toList();
     if (mounted) {
-      setState(() {
-        harvestTasks = items;
-      });
+      setState(() => harvestTasks = items);
     }
   }
 
   Future<void> _navigateToNewTaskPage(BuildContext context) async {
-    final result = await AutoRouter.of(context).push(const NewTaskRoute(),);
+    final result = await AutoRouter.of(context).push(
+      const NewTaskRoute(),
+    );
 
     if (result == true) {
       await _getHarvestTasks();

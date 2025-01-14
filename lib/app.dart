@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tiberium_crm/features/app/routing/app_router.dart';
 import 'package:tiberium_crm/features/app/theme.dart';
-import 'package:tiberium_crm/infra/network/auth_api_service.dart';
-import 'package:tiberium_crm/infra/network/interceptor.dart';
-import 'package:tiberium_crm/repos/repository.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
-  static late LoggingInterceptor mainInterceptor;
-  static late AuthApiService authAPI;
-  static late Repository repository;
 
   @override
   State<App> createState() => _AppState();
@@ -36,20 +30,15 @@ class _AppState extends State<App> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _future,
-      builder: (context, snap) {
-        return MaterialApp.router(
+  Widget build(BuildContext context) => FutureBuilder(
+        future: _future,
+        builder: (context, snap) => MaterialApp.router(
           theme: Themes.light,
           routerDelegate: router.delegate(),
           routeInformationParser: router.defaultRouteParser(),
-        );
-      },
-    );
-  }
+        ),
+      );
 
-  Future<void> initializeApp(AppRouter router) async {
-    return router.replaceAll(const [AuthRoute()]);
-  }
+  Future<void> initializeApp(AppRouter router) async =>
+      router.replaceAll(const [AuthRoute()]);
 }
