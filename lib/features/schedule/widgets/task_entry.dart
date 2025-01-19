@@ -26,7 +26,7 @@ class _TaskEntryState extends State<TaskEntry> {
           TaskRoute(task: widget.task),
         );
         if (result == true) {
-          widget.onTaskUpdated(); // Call the callback function
+          widget.onTaskUpdated();
         }
       },
       child: Column(children: [
@@ -37,7 +37,9 @@ class _TaskEntryState extends State<TaskEntry> {
             children: [
               Expanded(flex: 1, child: Text(widget.task.priority.toString())),
               Expanded(
-                  flex: 2, child: Text(widget.task.destination ?? 'Unknown')),
+                flex: 2,
+                child: Text(widget.task.destination ?? 'Unknown'),
+              ),
               Expanded(
                 flex: 2,
                 child: Text('${widget.task.harvestOperator?.firstName} '

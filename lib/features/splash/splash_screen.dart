@@ -7,15 +7,13 @@ class RootPage extends StatelessWidget {
   const RootPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return AutoTabsScaffold(
-      routes: const [
-        ScheduleRoute(),
-        HomeRoute(),
-        ProfileRoute(),
-      ],
-      bottomNavigationBuilder: (_, tabsRouter) {
-        return BottomNavigationBar(
+  Widget build(BuildContext context) => AutoTabsScaffold(
+        routes: const [
+          ScheduleRoute(),
+          HomeRoute(),
+          ProfileRoute(),
+        ],
+        bottomNavigationBuilder: (_, tabsRouter) => BottomNavigationBar(
           currentIndex: tabsRouter.activeIndex,
           onTap: tabsRouter.setActiveIndex,
           items: const [
@@ -44,8 +42,6 @@ class RootPage extends StatelessWidget {
               ),
             ),
           ],
-        );
-      },
-    );
-  }
+        ),
+      );
 }

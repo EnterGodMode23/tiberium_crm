@@ -1,51 +1,51 @@
 class User {
-  String? uid;
+  String uid;
   String? created;
   String? updated;
-  String? phoneNumber;
+  String phoneNumber;
   bool? deactivated;
   String? email;
-  String? role;
-  String? firstName;
-  String? lastName;
-  String? photoLink = '';
-
+  String role;
+  String firstName;
+  String lastName;
+  String? photoLink;
 
   User({
-    this.uid,
+    required this.uid,
     this.created,
     this.updated,
-    this.phoneNumber,
+    required this.phoneNumber,
     this.deactivated,
     this.email,
-    this.role,
-    this.firstName,
-    this.lastName
+    required this.role,
+    required this.firstName,
+    required this.lastName,
+    this.photoLink = '',
   });
 
-  User.fromJson(Map<String, dynamic> json) {
-    uid = json['uid'];
-    created = json['created'];
-    updated = json['updated'];
-    phoneNumber = json['phone_number'];
-    deactivated = json['deactivated'];
-    email = json['email'];
-    role = json['role'];
-    firstName = json['first_name'];
-    lastName = json['last_name'];
-  }
+  factory User.fromJson(Map<String, dynamic> json) => User(
+        uid: json['uid'],
+        created: json['created'],
+        updated: json['updated'],
+        phoneNumber: json['phone_number'],
+        deactivated: json['deactivated'],
+        email: json['email'],
+        role: json['role'],
+        firstName: json['first_name'],
+        lastName: json['last_name'],
+        photoLink: json['photo_link'] ?? '',
+      );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['uid'] = uid;
-    data['created'] = created;
-    data['updated'] = updated;
-    data['phone_number'] = phoneNumber;
-    data['deactivated'] = deactivated;
-    data['email'] = email;
-    data['role'] = role;
-    data['first_name'] = firstName;
-    data['last_name'] = lastName;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+        'uid': uid,
+        'created': created,
+        'updated': updated,
+        'phone_number': phoneNumber,
+        'deactivated': deactivated,
+        'email': email,
+        'role': role,
+        'first_name': firstName,
+        'last_name': lastName,
+        'photo_link': photoLink,
+      };
 }
