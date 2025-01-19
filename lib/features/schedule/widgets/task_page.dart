@@ -59,7 +59,7 @@ class _TaskPageState extends State<TaskPage> {
                       'Task ID:',
                     ),
                     Text(
-                      widget.task.uid ?? 'Unknown',
+                      widget.task.uid,
                       style: const TextStyle(color: Colors.grey),
                     ),
                   ],

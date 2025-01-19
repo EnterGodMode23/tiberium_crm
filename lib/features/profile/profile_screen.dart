@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tiberium_crm/features/app/routing/app_router.dart';
 import 'package:tiberium_crm/features/profile/widgets/profile_button.dart';
 import 'package:tiberium_crm/features/profile/widgets/user_info.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../data/models/user.dart';
 
@@ -77,9 +78,9 @@ class _ProfilePageState extends State<ProfilePage> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 children: [
-                  InkWell(
-                    onTap: () {},
-                    child: const ProfileButton(
+                  const InkWell(
+                    onTap: _launchPhoneCall,
+                    child: ProfileButton(
                       'Support',
                       'assets/support_icon.svg',
                     ),
@@ -98,4 +99,15 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
       );
+}
+
+Future<void> _launchPhoneCall() async {
+  if (!await launchUrl(
+    Uri(
+      scheme: 'tel',
+      path: '+79999999999',
+    ),
+  )) {
+    throw Exception('Could not launch phone call');
+  }
 }
