@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tiberium_crm/features/app/routing/app_router.dart';
 import 'package:tiberium_crm/features/app/theme.dart';
+import 'package:tiberium_crm/infra/network/base/shared_prefs_keys.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -39,6 +42,11 @@ class _AppState extends State<App> {
         ),
       );
 
-  Future<void> initializeApp(AppRouter router) async =>
-      router.replaceAll(const [AuthRoute()]);
+  Future<void> initializeApp(AppRouter router) async {
+    final storage = GetIt.I<SharedPreferences>();
+    final user = storage.getString(userKey);
+    user != null
+        ? router.replaceAll(const [HomeRoute()])
+        : router.replaceAll(const [AuthRoute()]);
+  }
 }

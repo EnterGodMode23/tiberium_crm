@@ -14,10 +14,12 @@ class AuthRepository {
   Future<bool> smsLogin(SmsLoginReq req) async {
     try {
       final response = await _authClient.smsLogin(smsLoginReq: req);
-      _storage.setString('user', jsonEncode(response.data?.user));
-      _storage.setString('role', response.data?.user?.role ?? '');
-      _storage.setString('token', response.data?.accessToken ?? '');
-      return response.data != null;
+      if (response.data?.user != null) {
+        _storage.setString('user', jsonEncode(response.data!.user));
+        _storage.setString('token', response.data!.accessToken);
+        return true;
+      }
+      return false;
     } catch (E) {
       return false;
     }
