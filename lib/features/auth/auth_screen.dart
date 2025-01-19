@@ -36,9 +36,9 @@ class _AuthPageState extends State<AuthPage> {
           key: _formKey,
           child: Scaffold(
             body: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   SvgPicture.asset('assets/logo.svg'),
                   Column(
@@ -46,7 +46,10 @@ class _AuthPageState extends State<AuthPage> {
                       FormBuilderTextField(
                         name: 'phone',
                         keyboardType: TextInputType.text,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
                           labelText: 'Phone',
                         ),
                         validator: FormBuilderValidators.compose(
@@ -95,7 +98,7 @@ class _AuthPageState extends State<AuthPage> {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) => const AlertDialog(
-                            title: Text('Incorrect number or sms code'),
+                            title: Text('Authorization error'),
                           ),
                         );
                       }
