@@ -104,7 +104,6 @@ class _SchedulePageState extends State<SchedulePage> {
   }
 
   Future<void> _getProcessingTasks() async {
-    final rep = App.repository;
     final list = await rep.getProcessingTasks();
 
     final items = list.processingTasks?.map((pTask) {
