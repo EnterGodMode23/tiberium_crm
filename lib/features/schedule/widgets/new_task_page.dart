@@ -31,6 +31,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
   final rep = GetIt.I.get<Repository>();
   late String currUid;
   String? currMainTaskRef;
+  String? destination;
 
   List<DropdownMenuItem<User>> users = [];
   List<DropdownMenuItem<MainTask>> mainTasks = [];
@@ -89,29 +90,16 @@ class _NewTaskPageState extends State<NewTaskPage> {
                       items: users,
                     ),
                     const SizedBox(height: 16),
-                    FormBuilderTextField(
-                      name: 'destination',
-                      keyboardType: TextInputType.text,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        labelText: 'Destination',
-                      ),
-                      validator: FormBuilderValidators.compose(
-                        [
-                          FormBuilderValidators.required(
-                            errorText: 'Enter the task\'s destination',
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
                     FormBuilderDropdown(
                       name: 'mainTaskRef',
                       onChanged: (value) {
-                        currMainTask = value;
-                        currMainTaskRef = currMainTask?.uid;
+                        setState(() {
+                          currMainTask = value;
+                          currMainTaskRef = currMainTask?.uid;
+                          destination = currMainTask?.destination;
+                          _taskFormKey.currentState?.fields['destination']
+                              ?.didChange(destination);
+                        });
                       },
                       items: mainTasks,
                       decoration: InputDecoration(
@@ -212,10 +200,11 @@ class _NewTaskPageState extends State<NewTaskPage> {
     final res = await rep.postProcessingTask(
       CreateNewProcTaskReq(
         processingOperator: currUid,
-        destination: _taskFormKey.currentState!.value['destination'],
+        destination: destination ?? 'Unknown',
         priority: _taskFormKey.currentState!.value['priority'],
         mainTaskRef: currMainTaskRef ?? 'Unknown main task ref',
         killos: _taskFormKey.currentState!.value['kilos'],
+        status: 'TO_DO',
       ),
     );
 
@@ -243,16 +232,17 @@ class _NewTaskPageState extends State<NewTaskPage> {
     final res = await rep.postHarvestTask(
       CreateNewHarvestTaskReq(
         processingOperator: currUid,
-        destination: _taskFormKey.currentState!.value['destination'],
+        destination: destination ?? 'Unknown',
         priority: _taskFormKey.currentState!.value['priority'],
-        mainTaskRef: _taskFormKey.currentState!.value['mainTaskRef'],
-        killos: _taskFormKey.currentState!.value['kilos'],
+        mainTaskRef: currMainTaskRef ?? 'Task ref is null',
+        killos: int.parse(_taskFormKey.currentState!.value['kilos']),
+        status: 'TO_DO',
       ),
     );
 
-    if (res.uid.isNotEmpty) {
+    if (res.data.uid.isNotEmpty) {
       print(res);
-      AutoRouter.of(context).navigate(HarvestTaskRoute(task: res));
+      AutoRouter.of(context).navigate(HarvestTaskRoute(task: res.data));
       AutoRouter.of(context).maybePop(true);
     } else {
       showDialog(

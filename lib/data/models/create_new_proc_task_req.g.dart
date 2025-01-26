@@ -14,6 +14,7 @@ CreateNewProcTaskReq _$CreateNewProcTaskReqFromJson(
       priority: (json['priority'] as num).toInt(),
       mainTaskRef: json['main_task_ref'] as String,
       killos: (json['processed_kilos'] as num).toInt(),
+      status: json['status'] as String,
     );
 
 Map<String, dynamic> _$CreateNewProcTaskReqToJson(
@@ -24,4 +25,5 @@ Map<String, dynamic> _$CreateNewProcTaskReqToJson(
       'priority': instance.priority,
       'main_task_ref': instance.mainTaskRef,
       'processed_kilos': instance.killos,
+      'status': instance.status,
     };

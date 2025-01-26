@@ -21,9 +21,6 @@ class AuthInterceptor extends Interceptor {
   void onResponse(Response response, ResponseInterceptorHandler handler) async {
     response.data = jsonDecode(response.data);
     super.onResponse(response, handler);
-    localStorage.setString('user', jsonEncode(response.data['data']['user']));
-    localStorage.setString('role', response.data['data']['user']['role']);
-    localStorage.setString('token', response.data['data']['access_token']);
     print('data - ${response.data}');
   }
 

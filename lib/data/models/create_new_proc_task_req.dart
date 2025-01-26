@@ -14,6 +14,7 @@ class CreateNewProcTaskReq {
   String mainTaskRef;
   @JsonKey(name: 'processed_kilos')
   int killos;
+  String status;
 
   CreateNewProcTaskReq({
     required this.processingOperator,
@@ -21,6 +22,7 @@ class CreateNewProcTaskReq {
     required this.priority,
     required this.mainTaskRef,
     required this.killos,
+    required this.status,
   });
 
   factory CreateNewProcTaskReq.fromJson(Map<String, dynamic> json) =>

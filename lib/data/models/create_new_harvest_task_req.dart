@@ -14,6 +14,7 @@ class CreateNewHarvestTaskReq {
   String mainTaskRef;
   @JsonKey(name: 'target_kilos_to_harvest')
   int killos;
+  String status;
 
   CreateNewHarvestTaskReq({
     required this.processingOperator,
@@ -21,6 +22,7 @@ class CreateNewHarvestTaskReq {
     required this.priority,
     required this.mainTaskRef,
     required this.killos,
+    required this.status,
   });
 
   factory CreateNewHarvestTaskReq.fromJson(Map<String, dynamic> json) =>

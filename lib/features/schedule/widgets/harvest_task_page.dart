@@ -73,8 +73,9 @@ class _HarvestTaskPageState extends State<HarvestTaskPage> {
                       ),
                     ),
                     Expanded(
-                        flex: 1,
-                        child: Text(widget.task.runtimeType.toString())),
+                      flex: 1,
+                      child: Text(widget.task.runtimeType.toString()),
+                    ),
                   ],
                 ),
                 const Padding(padding: EdgeInsets.all(12)),
@@ -99,23 +100,25 @@ class _HarvestTaskPageState extends State<HarvestTaskPage> {
                       ),
                     ),
                     Expanded(
-                        flex: 1,
-                        child: Text(widget.task.destination ?? 'Unknown')),
+                      flex: 1,
+                      child: Text(widget.task.destination ?? 'Unknown'),
+                    ),
                   ],
                 ),
                 const Padding(padding: EdgeInsets.all(12)),
-                Row(
+                const Row(
                   children: [
-                    const Expanded(
+                    Expanded(
                       flex: 1,
                       child: Text(
                         'Operator:',
                       ),
                     ),
                     Expanded(
-                        flex: 1,
-                        child: Text('{widget.task?.firstName} '
-                            '{widget.task.harvestOperator?.lastName}')),
+                      flex: 1,
+                      child: Text('{widget.task?.firstName} '
+                          '{widget.task.harvestOperator?.lastName}'),
+                    ),
                   ],
                 ),
                 const Padding(padding: EdgeInsets.all(12)),
@@ -134,17 +137,18 @@ class _HarvestTaskPageState extends State<HarvestTaskPage> {
                   ],
                 ),
                 const Padding(padding: EdgeInsets.all(12)),
-                Row(
+                const Row(
                   children: [
-                    const Expanded(
+                    Expanded(
                       flex: 1,
                       child: Text(
                         'Creation date:',
                       ),
                     ),
                     Expanded(
-                        flex: 1,
-                        child: Text('widget.task.created' ?? 'Unknown')),
+                      flex: 1,
+                      child: Text('widget.task.created'),
+                    ),
                   ],
                 ),
                 const Padding(padding: EdgeInsets.all(20)),
@@ -155,10 +159,10 @@ class _HarvestTaskPageState extends State<HarvestTaskPage> {
                     style: Theme.of(context).elevatedButtonTheme.style,
                     onPressed: () async {
                       final res = await rep.patchHarvestTasks(
-                        widget.task.uid ?? 'NONE',
+                        widget.task.uid,
                         '{"status": "IN_PROGRESS"}',
                       );
-                      if (res.uid?.isNotEmpty ?? false) {
+                      if (res.data.uid.isNotEmpty) {
                         print(res);
                         AutoRouter.of(context).maybePop(true);
                       } else {

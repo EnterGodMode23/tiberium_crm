@@ -9,6 +9,7 @@ import 'package:get_it/get_it.dart';
 import 'package:tiberium_crm/data/models/sms_login_req.dart';
 import 'package:tiberium_crm/features/app/routing/app_router.dart';
 import 'package:tiberium_crm/features/app/theme.dart';
+import 'package:tiberium_crm/infra/network/interceptor.dart';
 import 'package:tiberium_crm/repos/auth_repository.dart';
 
 @RoutePage()

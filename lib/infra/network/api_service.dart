@@ -11,6 +11,7 @@ import 'package:tiberium_crm/data/models/tasks/main_task.dart';
 import 'package:tiberium_crm/data/models/tasks/main_task_response.dart';
 import 'package:tiberium_crm/data/models/tasks/processing_task.dart';
 import 'package:tiberium_crm/data/models/tasks/processing_task_list.dart';
+import 'package:tiberium_crm/data/models/tasks/single_harvest_task_response.dart';
 import 'package:tiberium_crm/data/models/users_list.dart';
 import 'package:tiberium_crm/data/models/tasks/single_main_task_response.dart';
 import 'package:tiberium_crm/infra/network/base/server_urls.dart';
@@ -33,12 +34,12 @@ abstract class ApiService {
   Future<HarvestTaskList> getHarvestTasks();
 
   @POST(harvestTasksUrl)
-  Future<HarvestTask> postHarvestTask({
+  Future<SingleHarvestTaskResponse> postHarvestTask({
     @Body() required final CreateNewHarvestTaskReq createReq,
   });
 
   @PATCH('$harvestTasksUrl/{uid}')
-  Future<HarvestTask> patchHarvestTasks({
+  Future<SingleHarvestTaskResponse> patchHarvestTasks({
     @Path('uid') required final String id,
     @Body() required final String hTask,
   });

@@ -103,15 +103,15 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<HarvestTask> postHarvestTask(
+  Future<SingleHarvestTaskResponse> postHarvestTask(
       {required CreateNewHarvestTaskReq createReq}) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(createReq.toJson());
-    final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<HarvestTask>(Options(
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<SingleHarvestTaskResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -127,12 +127,12 @@ class _ApiService implements ApiService {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = HarvestTask.fromJson(_result.data!);
+    final value = SingleHarvestTaskResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<HarvestTask> patchHarvestTasks({
+  Future<SingleHarvestTaskResponse> patchHarvestTasks({
     required String id,
     required String hTask,
   }) async {
@@ -140,8 +140,8 @@ class _ApiService implements ApiService {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = hTask;
-    final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<HarvestTask>(Options(
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<SingleHarvestTaskResponse>(Options(
       method: 'PATCH',
       headers: _headers,
       extra: _extra,
@@ -157,7 +157,7 @@ class _ApiService implements ApiService {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = HarvestTask.fromJson(_result.data!);
+    final value = SingleHarvestTaskResponse.fromJson(_result.data!);
     return value;
   }
 

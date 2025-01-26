@@ -30,8 +30,7 @@ class _SchedulePageState extends State<SchedulePage> {
   @override
   void initState() {
     currRole = _getCurrRole();
-
-    _getMainTasks();
+    _getTasks();
 
     super.initState();
   }
@@ -63,25 +62,37 @@ class _SchedulePageState extends State<SchedulePage> {
                 ),
                 for (HarvestTaskEntry task in harvestTasks ?? []) task,
                 for (ProcessingTaskEntry task in procTasks ?? []) task,
+                for (MainTaskEntry task in mainTasks ?? []) task,
                 const Padding(padding: EdgeInsets.all(30)),
               ],
             ),
           ),
-          Container(
-            alignment: Alignment.bottomCenter,
-            padding: const EdgeInsets.all(16),
-            child: ElevatedButton(
-              style: Theme.of(context).elevatedButtonTheme.style,
-              onPressed: () => _navigateToNewTaskPage(context),
-              child: const Text(
-                'New',
-                style: TextStyle(color: Colors.black87, fontSize: 32),
+          if (!_isOperator())
+            Container(
+              alignment: Alignment.bottomCenter,
+              padding: const EdgeInsets.all(16),
+              child: ElevatedButton(
+                style: Theme.of(context).elevatedButtonTheme.style,
+                onPressed: () => _navigateToNewTaskPage(context),
+                child: const Text(
+                  'New',
+                  style: TextStyle(color: Colors.black87, fontSize: 32),
+                ),
               ),
             ),
-          ),
         ],
       ),
     );
+  }
+
+  Future<void> _getTasks() async {
+    if (_isOperator()) {
+      currRole == Role.harvestOperator
+          ? _getHarvestTasks()
+          : _getProcessingTasks();
+    } else {
+      _getMainTasks();
+    }
   }
 
   Future<void> _getHarvestTasks() async {
@@ -100,11 +111,16 @@ class _SchedulePageState extends State<SchedulePage> {
     }
   }
 
+  bool _isOperator() =>
+      currRole == Role.harvestOperator || currRole == Role.processingOperator;
+
   Future<void> _getMainTasks() async {
+    if (_isOperator()) return;
+
     final list = await rep.getMainTasks();
 
     final items = list.data
-        ?.map(
+        .map(
           (hTask) => MainTaskEntry(
             task: hTask,
             onTaskUpdated: _getHarvestTasks,

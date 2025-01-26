@@ -3,9 +3,14 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 
 class LoggingInterceptor extends Interceptor {
-  final String authHeader;
+  String authHeader;
 
   LoggingInterceptor(this.authHeader);
+
+  void updateAuthHeader(String newToken) {
+    authHeader = newToken;
+  }
+
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     options.headers['Authorization'] = 'Bearer $authHeader';

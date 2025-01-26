@@ -11,6 +11,7 @@ import 'package:tiberium_crm/data/models/tasks/main_task.dart';
 import 'package:tiberium_crm/data/models/tasks/main_task_response.dart';
 import 'package:tiberium_crm/data/models/tasks/processing_task.dart';
 import 'package:tiberium_crm/data/models/tasks/processing_task_list.dart';
+import 'package:tiberium_crm/data/models/tasks/single_harvest_task_response.dart';
 import 'package:tiberium_crm/data/models/tasks/single_main_task_response.dart';
 import 'package:tiberium_crm/data/models/users_list.dart';
 import 'package:tiberium_crm/infra/network/api_service.dart';
@@ -29,7 +30,8 @@ class Repository {
 
   Future<MainTaskResponse> getMainTasks() async => await client.getMainTasks();
 
-  Future<HarvestTask> postHarvestTask(CreateNewHarvestTaskReq req) async {
+  Future<SingleHarvestTaskResponse> postHarvestTask(
+      CreateNewHarvestTaskReq req) async {
     final resp = await client.postHarvestTask(createReq: req);
     return resp;
   }
@@ -39,7 +41,7 @@ class Repository {
     return resp;
   }
 
-  Future<HarvestTask> patchHarvestTasks(String uid, String hTask) async =>
+  Future<SingleHarvestTaskResponse> patchHarvestTasks(String uid, String hTask) async =>
       await client.patchHarvestTasks(id: uid, hTask: hTask);
 
   Future<SingleMainTaskResponse> patchMainTasks(

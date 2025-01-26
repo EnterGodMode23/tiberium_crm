@@ -1,7 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tiberium_crm/data/models/tasks/harvest_task.dart';
 import 'package:tiberium_crm/features/app/routing/app_router.dart';
+import 'package:tiberium_crm/features/schedule/widgets/task_details_card.dart';
 
 class HarvestTaskEntry extends StatefulWidget {
   final HarvestTask task;
@@ -18,6 +21,8 @@ class HarvestTaskEntry extends StatefulWidget {
 }
 
 class _HarvestTaskEntryState extends State<HarvestTaskEntry> {
+  final SharedPreferences localStorage = GetIt.I.get();
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -29,7 +34,22 @@ class _HarvestTaskEntryState extends State<HarvestTaskEntry> {
           widget.onTaskUpdated();
         }
       },
-      child: Column(children: [
+      child: Column(
+        children: [
+          if (_isOperator())
+            TaskDetailsCard(
+              destination: widget.task.destination ?? 'Unknown',
+              priority: widget.task.priority ?? 0,
+              status: widget.task.status,
+            )
+          else
+            ..._getManagerShedule(),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _getManagerShedule() => [
         const Divider(color: Colors.black87),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -49,7 +69,10 @@ class _HarvestTaskEntryState extends State<HarvestTaskEntry> {
           ),
         ),
         const Divider(color: Colors.black87),
-      ]),
-    );
+      ];
+
+  bool _isOperator() {
+    final role = localStorage.getString('role');
+    return role == 'HARVEST_OPERATOR' || role == 'PROCESSING_OPERATOR';
   }
 }

@@ -14,6 +14,7 @@ CreateNewHarvestTaskReq _$CreateNewHarvestTaskReqFromJson(
       priority: (json['priority'] as num).toInt(),
       mainTaskRef: json['main_task_ref'] as String,
       killos: (json['target_kilos_to_harvest'] as num).toInt(),
+      status: json['status'] as String,
     );
 
 Map<String, dynamic> _$CreateNewHarvestTaskReqToJson(
@@ -24,4 +25,5 @@ Map<String, dynamic> _$CreateNewHarvestTaskReqToJson(
       'priority': instance.priority,
       'main_task_ref': instance.mainTaskRef,
       'target_kilos_to_harvest': instance.killos,
+      'status': instance.status,
     };
