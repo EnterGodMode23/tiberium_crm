@@ -4,44 +4,37 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tiberium_crm/data/models/create_new_proc_task_req.dart';
-import 'package:tiberium_crm/data/models/create_new_harvest_task_req.dart';
+import 'package:tiberium_crm/data/models/create_new_main_task_req.dart';
 import 'package:tiberium_crm/data/models/role_enum.dart';
-import 'package:tiberium_crm/data/models/tasks/main_task.dart';
 import 'package:tiberium_crm/data/models/user.dart';
 import 'package:tiberium_crm/features/app/routing/app_router.dart';
 import 'package:tiberium_crm/repos/repository.dart';
 
 @RoutePage()
-class NewTaskPage extends StatefulWidget {
-  final Role currRole;
-
-  const NewTaskPage(
-    this.currRole, {
-    super.key,
-  });
+class NewPlanPage extends StatefulWidget {
+  const NewPlanPage({super.key});
 
   @override
-  State<NewTaskPage> createState() => _NewTaskPageState();
+  State<NewPlanPage> createState() => _NewPlanPageState();
 }
 
-class _NewTaskPageState extends State<NewTaskPage> {
+class _NewPlanPageState extends State<NewPlanPage> {
+  late final Role currRole;
   late final GlobalKey<FormBuilderState> _taskFormKey;
   final SharedPreferences localStorage = GetIt.I.get();
   final rep = GetIt.I.get<Repository>();
-  late String currUid;
-  String? currMainTaskRef;
 
-  List<DropdownMenuItem<User>> users = [];
-  List<DropdownMenuItem<MainTask>> mainTasks = [];
+  String currProcessingUid = '';
+  String currHarvestUid = '';
 
-  MainTask? currMainTask;
+  List<DropdownMenuItem<User>> processingManagers = [];
+  List<DropdownMenuItem<User>> harvestManagers = [];
 
   @override
   void initState() {
     _taskFormKey = GlobalKey();
-    _getOperators();
-    _getMainTasks();
+    currRole = _getCurrRole();
+    _getManagers();
     super.initState();
   }
 
@@ -55,7 +48,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Text(
-                  'New Task',
+                  'New Plan',
                   style: Theme.of(context)
                       .textTheme
                       .headlineMedium
@@ -70,23 +63,63 @@ class _NewTaskPageState extends State<NewTaskPage> {
               children: [
                 Column(
                   children: [
+                    const SizedBox(height: 16),
                     FormBuilderDropdown(
-                      name: 'operator',
+                      name: 'harvest_manager_id',
+                      onChanged: (value) =>
+                          currHarvestUid = value?.uid ?? 'Unknown',
+                      items: harvestManagers,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
-                        labelText: 'Operator',
+                        labelText: 'Mining curator',
                       ),
                       validator: FormBuilderValidators.compose(
                         [
                           FormBuilderValidators.required(
-                            errorText: 'Enter the task\'s destination',
+                            errorText: 'Enter the mining curator',
                           ),
                         ],
                       ),
-                      onChanged: (value) => currUid = value?.uid ?? 'Unknown',
-                      items: users,
+                    ),
+                    const SizedBox(height: 16),
+                    FormBuilderDropdown(
+                      name: 'proc_manager_id',
+                      onChanged: (value) =>
+                          currProcessingUid = value?.uid ?? 'Unknown',
+                      items: processingManagers,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        labelText: 'Processing curator',
+                      ),
+                      validator: FormBuilderValidators.compose(
+                        [
+                          FormBuilderValidators.required(
+                            errorText: 'Enter the processing curator',
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    FormBuilderTextField(
+                      name: 'amount',
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        labelText: 'Tiberium amount',
+                      ),
+                      validator: FormBuilderValidators.compose(
+                        [
+                          FormBuilderValidators.required(
+                            errorText: 'Enter the tiberium amount',
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 16),
                     FormBuilderTextField(
@@ -101,29 +134,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
                       validator: FormBuilderValidators.compose(
                         [
                           FormBuilderValidators.required(
-                            errorText: 'Enter the task\'s destination',
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    FormBuilderDropdown(
-                      name: 'mainTaskRef',
-                      onChanged: (value) {
-                        currMainTask = value;
-                        currMainTaskRef = currMainTask?.uid;
-                      },
-                      items: mainTasks,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        labelText: 'Main task',
-                      ),
-                      validator: FormBuilderValidators.compose(
-                        [
-                          FormBuilderValidators.required(
-                            errorText: 'Enter the main task',
+                            errorText: 'Enter the destination',
                           ),
                         ],
                       ),
@@ -159,24 +170,6 @@ class _NewTaskPageState extends State<NewTaskPage> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
-                    FormBuilderTextField(
-                      name: 'kilos',
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        labelText: 'Tiberium amount',
-                      ),
-                      validator: FormBuilderValidators.compose(
-                        [
-                          FormBuilderValidators.required(
-                            errorText: 'Enter the tiberium amount',
-                          ),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
                 const Spacer(),
@@ -186,9 +179,29 @@ class _NewTaskPageState extends State<NewTaskPage> {
                   ),
                   child: ElevatedButton(
                     style: Theme.of(context).elevatedButtonTheme.style,
-                    onPressed: () => widget.currRole == Role.harvestManager
-                        ? _createHarvestTask()
-                        : _createProcessingTask(),
+                    onPressed: () async {
+                      if (_taskFormKey.currentState?.saveAndValidate() !=
+                          true) {
+                        return;
+                      }
+
+                      final res = (await rep.postMainTask(
+                        CreateNewMainTaskReq(
+                          processingManagerId: currProcessingUid,
+                          harvestManagerId: currHarvestUid,
+                          targetKilosToSale: int.tryParse(
+                            _taskFormKey.currentState!.value['amount'],
+                          ),
+                          destination:
+                              _taskFormKey.currentState!.value['destination'],
+                          priority:
+                              _taskFormKey.currentState!.value['priority'],
+                          status: 'DRAFT',
+                        ),
+                      ))
+                          .data;
+                      AutoRouter.of(context).navigate(const ScheduleRoute());
+                    },
                     child: Text(
                       'Create Task',
                       style: Theme.of(context)
@@ -204,97 +217,32 @@ class _NewTaskPageState extends State<NewTaskPage> {
         ),
       );
 
-  Future<void> _createProcessingTask() async {
-    if (_taskFormKey.currentState?.saveAndValidate() != true) {
-      return;
-    }
+  Role _getCurrRole() =>
+      RoleExtension.fromString(localStorage.getString('role')!);
 
-    final res = await rep.postProcessingTask(
-      CreateNewProcTaskReq(
-        processingOperator: currUid,
-        destination: _taskFormKey.currentState!.value['destination'],
-        priority: _taskFormKey.currentState!.value['priority'],
-        mainTaskRef: currMainTaskRef ?? 'Unknown main task ref',
-        killos: _taskFormKey.currentState!.value['kilos'],
-      ),
-    );
-
-    if (res.uid?.isNotEmpty ?? false) {
-      print(res);
-      AutoRouter.of(context).navigate(ProcessingTaskRoute(task: res));
-      AutoRouter.of(context).maybePop(true);
-    } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => const AlertDialog(
-          title: Text('Incorrect input'),
-        ),
-      );
-      AutoRouter.of(context).navigate(const ScheduleRoute());
-      AutoRouter.of(context).maybePop(false);
-    }
-  }
-
-  Future<void> _createHarvestTask() async {
-    if (_taskFormKey.currentState?.saveAndValidate() != true) {
-      return;
-    }
-
-    final res = await rep.postHarvestTask(
-      CreateNewHarvestTaskReq(
-        processingOperator: currUid,
-        destination: _taskFormKey.currentState!.value['destination'],
-        priority: _taskFormKey.currentState!.value['priority'],
-        mainTaskRef: _taskFormKey.currentState!.value['mainTaskRef'],
-        killos: _taskFormKey.currentState!.value['kilos'],
-      ),
-    );
-
-    if (res.uid.isNotEmpty) {
-      print(res);
-      AutoRouter.of(context).navigate(HarvestTaskRoute(task: res));
-      AutoRouter.of(context).maybePop(true);
-    } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => const AlertDialog(
-          title: Text('Incorrect input'),
-        ),
-      );
-      AutoRouter.of(context).navigate(const ScheduleRoute());
-      AutoRouter.of(context).maybePop(false);
-    }
-  }
-
-  Future<void> _getOperators() async {
+  Future<void> _getManagers() async {
     final list = await rep.getUsers();
 
-    final items = list.users
-        ?.map(
-          (user) => DropdownMenuItem(
-            value: user,
-            child: Text('${user.firstName}  ${user.lastName}'),
-          ),
-        )
-        .toList();
-    if (mounted) {
-      setState(() => users = items ?? []);
-    }
-  }
+    final processing =
+        list.users?.where((user) => user.role == Role.processingManager).map(
+              (user) => DropdownMenuItem(
+                value: user,
+                child: Text('${user.firstName}  ${user.lastName}'),
+              ),
+            );
 
-  Future<void> _getMainTasks() async {
-    final list = await rep.getMainTasks();
-
-    final items = list.data
-        .map(
-          (task) => DropdownMenuItem(
-            value: task,
-            child: Text(task.destination),
-          ),
-        )
-        .toList();
+    final harvest =
+        list.users?.where((user) => user.role == Role.harvestManager).map(
+              (user) => DropdownMenuItem(
+                value: user,
+                child: Text('${user.firstName}  ${user.lastName}'),
+              ),
+            );
     if (mounted) {
-      setState(() => mainTasks = items);
+      setState(() {
+        processingManagers.addAll(processing ?? []);
+        harvestManagers.addAll(harvest ?? []);
+      });
     }
   }
 }

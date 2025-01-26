@@ -1,12 +1,17 @@
 import 'dart:async';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tiberium_crm/data/models/create_new_main_task_req.dart';
 import 'package:tiberium_crm/data/models/create_new_proc_task_req.dart';
-import 'package:tiberium_crm/data/models/create_new_task_req.dart';
+import 'package:tiberium_crm/data/models/create_new_harvest_task_req.dart';
+import 'package:tiberium_crm/data/models/role_enum.dart';
 import 'package:tiberium_crm/data/models/tasks/harvest_task.dart';
 import 'package:tiberium_crm/data/models/tasks/harvest_task_list.dart';
+import 'package:tiberium_crm/data/models/tasks/main_task.dart';
+import 'package:tiberium_crm/data/models/tasks/main_task_response.dart';
 import 'package:tiberium_crm/data/models/tasks/processing_task.dart';
 import 'package:tiberium_crm/data/models/tasks/processing_task_list.dart';
+import 'package:tiberium_crm/data/models/tasks/single_main_task_response.dart';
 import 'package:tiberium_crm/data/models/users_list.dart';
 import 'package:tiberium_crm/infra/network/api_service.dart';
 import 'package:get_it/get_it.dart';
@@ -17,21 +22,29 @@ class Repository {
 
   Repository(this.client);
 
-  Future<UsersList> getUsers() async =>
-      await client.getUsers(role:
-      localStorage.getString('role') == 'HARVEST_MANAGER' ?
-      'HARVEST_OPERATOR' : 'PROCESSING_OPERATOR',);
+  Future<UsersList> getUsers() async => await client.getUsers();
 
   Future<HarvestTaskList> getHarvestTasks() async =>
       await client.getHarvestTasks();
 
-  Future<HarvestTask> postHarvestTask(CreateNewTaskReq req) async {
+  Future<MainTaskResponse> getMainTasks() async => await client.getMainTasks();
+
+  Future<HarvestTask> postHarvestTask(CreateNewHarvestTaskReq req) async {
     final resp = await client.postHarvestTask(createReq: req);
+    return resp;
+  }
+
+  Future<SingleMainTaskResponse> postMainTask(CreateNewMainTaskReq req) async {
+    final resp = await client.postMainTask(createReq: req);
     return resp;
   }
 
   Future<HarvestTask> patchHarvestTasks(String uid, String hTask) async =>
       await client.patchHarvestTasks(id: uid, hTask: hTask);
+
+  Future<SingleMainTaskResponse> patchMainTasks(
+          String uid, String hTask) async =>
+      await client.patchMainTasks(id: uid, hTask: hTask);
 
   Future<ProcessingTaskList> getProcessingTasks() async =>
       await client.getProcessingTasks();

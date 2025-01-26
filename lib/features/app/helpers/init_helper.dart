@@ -22,6 +22,6 @@ mixin InitHelper {
       ),
     );
 
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
   }
 }

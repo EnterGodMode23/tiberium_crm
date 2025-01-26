@@ -3,7 +3,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tiberium_crm/data/models/role_enum.dart';
 import 'package:tiberium_crm/features/app/routing/app_router.dart';
+import 'package:tiberium_crm/features/schedule/widgets/main_task_entry.dart';
 import 'package:tiberium_crm/features/schedule/widgets/task_entry.dart';
 import 'package:tiberium_crm/repos/repository.dart';
 
@@ -18,21 +20,19 @@ class SchedulePage extends StatefulWidget {
 }
 
 class _SchedulePageState extends State<SchedulePage> {
-  late final String currRole;
+  late final Role currRole;
   final SharedPreferences localStorage = GetIt.I.get();
   final rep = GetIt.I.get<Repository>();
-  List<TaskEntry>? harvestTasks = [];
+  List<HarvestTaskEntry>? harvestTasks = [];
   List<ProcessingTaskEntry>? procTasks = [];
+  List<MainTaskEntry>? mainTasks = [];
 
   @override
   void initState() {
-    currRole = localStorage.getString('role') ?? '';
-    if (currRole == 'HARVEST_OPERATOR' ||
-        currRole == 'HARVEST_MANAGER'){
-      _getHarvestTasks();
-    } else {
-      _getProcessingTasks();
-    }
+    currRole = _getCurrRole();
+
+    _getMainTasks();
+
     super.initState();
   }
 
@@ -61,27 +61,24 @@ class _SchedulePageState extends State<SchedulePage> {
                   padding: const EdgeInsets.all(12),
                   child: const Text('Assigned tasks:'),
                 ),
-                for (TaskEntry task in harvestTasks ?? []) task,
+                for (HarvestTaskEntry task in harvestTasks ?? []) task,
                 for (ProcessingTaskEntry task in procTasks ?? []) task,
                 const Padding(padding: EdgeInsets.all(30)),
               ],
             ),
           ),
-          if (currRole == 'HARVEST_MANAGER' || currRole == 'PROCESSING_MANAGER')
-            Container(
-              alignment: Alignment.bottomCenter,
-              padding: const EdgeInsets.all(16),
-              child: ElevatedButton(
-                style: Theme.of(context).elevatedButtonTheme.style,
-                onPressed: () {
-                  _navigateToNewTaskPage(context);
-                },
-                child: const Text(
-                  'New',
-                  style: TextStyle(color: Colors.black87, fontSize: 32),
-                ),
+          Container(
+            alignment: Alignment.bottomCenter,
+            padding: const EdgeInsets.all(16),
+            child: ElevatedButton(
+              style: Theme.of(context).elevatedButtonTheme.style,
+              onPressed: () => _navigateToNewTaskPage(context),
+              child: const Text(
+                'New',
+                style: TextStyle(color: Colors.black87, fontSize: 32),
               ),
             ),
+          ),
         ],
       ),
     );
@@ -92,7 +89,7 @@ class _SchedulePageState extends State<SchedulePage> {
 
     final items = list.harvestTasks
         ?.map(
-          (hTask) => TaskEntry(
+          (hTask) => HarvestTaskEntry(
             task: hTask,
             onTaskUpdated: _getHarvestTasks,
           ),
@@ -103,11 +100,30 @@ class _SchedulePageState extends State<SchedulePage> {
     }
   }
 
+  Future<void> _getMainTasks() async {
+    final list = await rep.getMainTasks();
+
+    final items = list.data
+        ?.map(
+          (hTask) => MainTaskEntry(
+            task: hTask,
+            onTaskUpdated: _getHarvestTasks,
+          ),
+        )
+        .toList();
+    if (mounted) {
+      setState(() => mainTasks = items);
+    }
+  }
+
   Future<void> _getProcessingTasks() async {
     final list = await rep.getProcessingTasks();
 
     final items = list.processingTasks?.map((pTask) {
-      return ProcessingTaskEntry(task: pTask, onTaskUpdated: _getProcessingTasks,);
+      return ProcessingTaskEntry(
+        task: pTask,
+        onTaskUpdated: _getProcessingTasks,
+      );
     }).toList();
     if (mounted) {
       setState(() {
@@ -117,16 +133,25 @@ class _SchedulePageState extends State<SchedulePage> {
   }
 
   Future<void> _navigateToNewTaskPage(BuildContext context) async {
-    final result = await AutoRouter.of(context).push(
-      const NewTaskRoute(),
-    );
+    bool result;
+    if (currRole == Role.salesManager) {
+      result = await AutoRouter.of(context).push(const NewPlanRoute()) as bool;
+    } else {
+      result = await AutoRouter.of(context)
+          .push(NewTaskRoute(currRole: currRole)) as bool;
+    }
 
     if (result == true) {
-      if (currRole == 'HARVEST_MANAGER') {
+      if (currRole == Role.harvestManager) {
         await _getHarvestTasks();
-      } else if (currRole == 'PROCESSING_MANAGER'){
+      } else if (currRole == Role.processingManager) {
         await _getProcessingTasks();
+      } else {
+        await _getMainTasks();
       }
     }
   }
+
+  Role _getCurrRole() =>
+      RoleExtension.fromString(localStorage.getString('role')!);
 }

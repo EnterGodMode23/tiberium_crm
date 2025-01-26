@@ -21,16 +21,46 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const AuthPage(),
       );
     },
+    HarvestTaskRoute.name: (routeData) {
+      final args = routeData.argsAs<HarvestTaskRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: HarvestTaskPage(
+          task: args.task,
+          key: args.key,
+        ),
+      );
+    },
     HomeRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const HomePage(),
       );
     },
-    NewTaskRoute.name: (routeData) {
+    MainTaskRoute.name: (routeData) {
+      final args = routeData.argsAs<MainTaskRouteArgs>();
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const NewTaskPage(),
+        child: MainTaskPage(
+          task: args.task,
+          key: args.key,
+        ),
+      );
+    },
+    NewPlanRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const NewPlanPage(),
+      );
+    },
+    NewTaskRoute.name: (routeData) {
+      final args = routeData.argsAs<NewTaskRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: NewTaskPage(
+          args.currRole,
+          key: args.key,
+        ),
       );
     },
     ProcessingTaskRoute.name: (routeData) {
@@ -61,16 +91,6 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const SchedulePage(),
       );
     },
-    TaskRoute.name: (routeData) {
-      final args = routeData.argsAs<TaskRouteArgs>();
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: TaskPage(
-          task: args.task,
-          key: args.key,
-        ),
-      );
-    },
   };
 }
 
@@ -89,6 +109,44 @@ class AuthRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [HarvestTaskPage]
+class HarvestTaskRoute extends PageRouteInfo<HarvestTaskRouteArgs> {
+  HarvestTaskRoute({
+    required HarvestTask task,
+    Key? key,
+    List<PageRouteInfo>? children,
+  }) : super(
+          HarvestTaskRoute.name,
+          args: HarvestTaskRouteArgs(
+            task: task,
+            key: key,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'HarvestTaskRoute';
+
+  static const PageInfo<HarvestTaskRouteArgs> page =
+      PageInfo<HarvestTaskRouteArgs>(name);
+}
+
+class HarvestTaskRouteArgs {
+  const HarvestTaskRouteArgs({
+    required this.task,
+    this.key,
+  });
+
+  final HarvestTask task;
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'HarvestTaskRouteArgs{task: $task, key: $key}';
+  }
+}
+
+/// generated route for
 /// [HomePage]
 class HomeRoute extends PageRouteInfo<void> {
   const HomeRoute({List<PageRouteInfo>? children})
@@ -103,17 +161,93 @@ class HomeRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [NewTaskPage]
-class NewTaskRoute extends PageRouteInfo<void> {
-  const NewTaskRoute({List<PageRouteInfo>? children})
+/// [MainTaskPage]
+class MainTaskRoute extends PageRouteInfo<MainTaskRouteArgs> {
+  MainTaskRoute({
+    required MainTask task,
+    Key? key,
+    List<PageRouteInfo>? children,
+  }) : super(
+          MainTaskRoute.name,
+          args: MainTaskRouteArgs(
+            task: task,
+            key: key,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'MainTaskRoute';
+
+  static const PageInfo<MainTaskRouteArgs> page =
+      PageInfo<MainTaskRouteArgs>(name);
+}
+
+class MainTaskRouteArgs {
+  const MainTaskRouteArgs({
+    required this.task,
+    this.key,
+  });
+
+  final MainTask task;
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'MainTaskRouteArgs{task: $task, key: $key}';
+  }
+}
+
+/// generated route for
+/// [NewPlanPage]
+class NewPlanRoute extends PageRouteInfo<void> {
+  const NewPlanRoute({List<PageRouteInfo>? children})
       : super(
+          NewPlanRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'NewPlanRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [NewTaskPage]
+class NewTaskRoute extends PageRouteInfo<NewTaskRouteArgs> {
+  NewTaskRoute({
+    required Role currRole,
+    Key? key,
+    List<PageRouteInfo>? children,
+  }) : super(
           NewTaskRoute.name,
+          args: NewTaskRouteArgs(
+            currRole: currRole,
+            key: key,
+          ),
           initialChildren: children,
         );
 
   static const String name = 'NewTaskRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static const PageInfo<NewTaskRouteArgs> page =
+      PageInfo<NewTaskRouteArgs>(name);
+}
+
+class NewTaskRouteArgs {
+  const NewTaskRouteArgs({
+    required this.currRole,
+    this.key,
+  });
+
+  final Role currRole;
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'NewTaskRouteArgs{currRole: $currRole, key: $key}';
+  }
 }
 
 /// generated route for
@@ -194,41 +328,4 @@ class ScheduleRoute extends PageRouteInfo<void> {
   static const String name = 'ScheduleRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-/// generated route for
-/// [TaskPage]
-class TaskRoute extends PageRouteInfo<TaskRouteArgs> {
-  TaskRoute({
-    required HarvestTask task,
-    Key? key,
-    List<PageRouteInfo>? children,
-  }) : super(
-          TaskRoute.name,
-          args: TaskRouteArgs(
-            task: task,
-            key: key,
-          ),
-          initialChildren: children,
-        );
-
-  static const String name = 'TaskRoute';
-
-  static const PageInfo<TaskRouteArgs> page = PageInfo<TaskRouteArgs>(name);
-}
-
-class TaskRouteArgs {
-  const TaskRouteArgs({
-    required this.task,
-    this.key,
-  });
-
-  final HarvestTask task;
-
-  final Key? key;
-
-  @override
-  String toString() {
-    return 'TaskRouteArgs{task: $task, key: $key}';
-  }
 }

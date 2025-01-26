@@ -1,10 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'create_new_proc_task_req.g.dart';
+part 'create_new_harvest_task_req.g.dart';
 
 @JsonSerializable()
-class CreateNewProcTaskReq {
-  @JsonKey(name: 'processing_operator_id')
+class CreateNewHarvestTaskReq {
+  @JsonKey(name: 'harvest_operator_id')
   String processingOperator;
   @JsonKey(name: 'destination')
   String destination;
@@ -12,10 +12,10 @@ class CreateNewProcTaskReq {
   int priority;
   @JsonKey(name: 'main_task_ref')
   String mainTaskRef;
-  @JsonKey(name: 'processed_kilos')
+  @JsonKey(name: 'target_kilos_to_harvest')
   int killos;
 
-  CreateNewProcTaskReq({
+  CreateNewHarvestTaskReq({
     required this.processingOperator,
     required this.destination,
     required this.priority,
@@ -23,8 +23,8 @@ class CreateNewProcTaskReq {
     required this.killos,
   });
 
-  factory CreateNewProcTaskReq.fromJson(Map<String, dynamic> json) =>
-      _$CreateNewProcTaskReqFromJson(json);
+  factory CreateNewHarvestTaskReq.fromJson(Map<String, dynamic> json) =>
+      _$CreateNewHarvestTaskReqFromJson(json);
 
-  Map<String, dynamic> toJson() => _$CreateNewProcTaskReqToJson(this);
+  Map<String, dynamic> toJson() => _$CreateNewHarvestTaskReqToJson(this);
 }

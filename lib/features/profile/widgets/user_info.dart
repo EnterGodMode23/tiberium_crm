@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tiberium_crm/data/models/role_enum.dart';
 import 'package:tiberium_crm/features/profile/widgets/avatar.dart';
 import 'package:tiberium_crm/features/profile/widgets/info_body.dart';
 import '../../../data/models/user.dart';
@@ -24,7 +25,11 @@ class UserInfo extends StatelessWidget {
             child: Avatar(user.photoLink),
           ),
           const SizedBox(width: 16),
-          InfoBody(fio: user.firstName, role: user.role, id: user.uid),
+          InfoBody(
+            fio: user.firstName,
+            role: user.role.toStringX(),
+            id: user.uid,
+          ),
         ],
       );
 }

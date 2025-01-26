@@ -74,25 +74,25 @@ class _ProfilePageState extends State<ProfilePage> {
               child: UserInfo(user),
             ),
             const SizedBox(height: 32),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 children: [
-                  const InkWell(
+                  InkWell(
                     onTap: _launchPhoneCall,
                     child: ProfileButton(
                       'Support',
                       'assets/support_icon.svg',
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  InkWell(
-                    onTap: () {},
-                    child: const ProfileButton(
-                      'Language',
-                      'assets/language_icon.svg',
-                    ),
-                  ),
+                  SizedBox(height: 8),
+                  // InkWell(
+                  //   onTap: () {},
+                  //   child: const ProfileButton(
+                  //     'Language',
+                  //     'assets/language_icon.svg',
+                  //   ),
+                  // ),
                 ],
               ),
             ),

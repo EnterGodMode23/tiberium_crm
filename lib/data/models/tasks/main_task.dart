@@ -1,51 +1,57 @@
 import 'package:tiberium_crm/data/models/user.dart';
 
 class MainTask {
-  String uid;
-  String? created;
-  String? updated;
-  User? harvestOperator;
-  User harvestManager;
-  num? targetKilosToHarvest;
-  int? priority;
-  String status;
-  String? destination;
+  final String uid;
+  final String salesManagerId;
+  final String processingManagerId;
+  final String harvestManagerId;
+  final int targetKilosToSale;
+  final int priority;
+  final String destination;
+  final String status;
+  final User salesManager;
+  final User processingManager;
+  final User harvestManager;
 
   MainTask({
     required this.uid,
-    this.created,
-    this.updated,
-    this.harvestOperator,
-    required this.harvestManager,
-    this.targetKilosToHarvest,
-    this.priority,
+    required this.salesManagerId,
+    required this.processingManagerId,
+    required this.harvestManagerId,
+    required this.targetKilosToSale,
+    required this.priority,
+    required this.destination,
     required this.status,
-    this.destination,
+    required this.salesManager,
+    required this.processingManager,
+    required this.harvestManager,
   });
 
   Map<String, dynamic> toJson() => {
         'uid': uid,
-        'created': created,
-        'updated': updated,
-        'harvest_operator': harvestOperator?.toJson(),
-        'harvest_manager': harvestManager.toJson(),
-        'target_kilos_to_harvest': targetKilosToHarvest,
+        'sales_manager_id': salesManagerId,
+        'processing_manager_id': processingManagerId,
+        'harvest_manager_id': harvestManagerId,
+        'target_kilos_to_sale': targetKilosToSale,
         'priority': priority,
-        'status': status,
         'destination': destination,
+        'status': status,
+        'sales_manager': salesManager.toJson(),
+        'processing_manager': processingManager.toJson(),
+        'harvest_manager': harvestManager.toJson(),
       };
 
   factory MainTask.fromJson(Map<String, dynamic> json) => MainTask(
         uid: json['uid'],
-        created: json['created'],
-        updated: json['updated'],
-        harvestOperator: json['harvest_operator'] != null
-            ? User.fromJson(json['harvest_operator'])
-            : null,
-        harvestManager: User.fromJson(json['harvest_manager']),
-        targetKilosToHarvest: json['target_kilos_to_harvest'],
+        salesManagerId: json['sales_manager_id'],
+        processingManagerId: json['processing_manager_id'],
+        harvestManagerId: json['harvest_manager_id'],
+        targetKilosToSale: (json['target_kilos_to_sale'] as num).toInt(),
         priority: json['priority'],
-        status: json['status'],
         destination: json['destination'],
+        status: json['status'],
+        salesManager: User.fromJson(json['sales_manager']),
+        processingManager: User.fromJson(json['processing_manager']),
+        harvestManager: User.fromJson(json['harvest_manager']),
       );
 }

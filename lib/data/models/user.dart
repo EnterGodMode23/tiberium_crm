@@ -1,3 +1,5 @@
+import 'package:tiberium_crm/data/models/role_enum.dart';
+
 class User {
   String uid;
   String? created;
@@ -5,7 +7,7 @@ class User {
   String phoneNumber;
   bool? deactivated;
   String? email;
-  String role;
+  Role role;
   String firstName;
   String lastName;
   String? photoLink;
@@ -30,7 +32,7 @@ class User {
         phoneNumber: json['phone_number'],
         deactivated: json['deactivated'],
         email: json['email'],
-        role: json['role'],
+        role: RoleExtension.fromString(json['role'] as String),
         firstName: json['first_name'],
         lastName: json['last_name'],
         photoLink: json['photo_link'] ?? '',
@@ -43,7 +45,7 @@ class User {
         'phone_number': phoneNumber,
         'deactivated': deactivated,
         'email': email,
-        'role': role,
+        'role': role.toStringX(),
         'first_name': firstName,
         'last_name': lastName,
         'photo_link': photoLink,

@@ -1,3 +1,4 @@
+import 'package:tiberium_crm/data/models/role_enum.dart';
 import 'package:tiberium_crm/data/models/user.dart';
 
 class ProcessingTask {
@@ -32,7 +33,12 @@ class ProcessingTask {
       uid = json['data']['uid'];
       created = json['data']['created'];
       updated = json['data']['updated'];
-      processingOperator = User(firstName: 'Process', lastName: 'Test', uid: '1234-dfaf-afad-dadb', phoneNumber: '+78883334445', role: 'processing_operator');
+      processingOperator = User(
+          firstName: 'Process',
+          lastName: 'Test',
+          uid: '1234-dfaf-afad-dadb',
+          phoneNumber: '+78883334445',
+          role: Role.processingOperator);
       processingManager = null;
       processedKilos = json['data']['processed_kilos'];
       priority = json['data']['priority'];
@@ -48,7 +54,13 @@ class ProcessingTask {
         processingOperator = User.fromJson(json['processing_operator']);
         processingManager = User.fromJson(json['processing_manager']);
       } catch (e) {
-      processingOperator = User(firstName: 'Process', lastName: 'Test', uid: '1234-dfaf-afad-dadb', phoneNumber: '+78883334445', role: 'processing_operator');
+        processingOperator = User(
+          firstName: 'Process',
+          lastName: 'Test',
+          uid: '1234-dfaf-afad-dadb',
+          phoneNumber: '+78883334445',
+          role: Role.processingOperator,
+        );
         processingManager = null;
       }
       processedKilos = json['processed_kilos'];

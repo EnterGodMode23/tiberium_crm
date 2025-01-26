@@ -49,9 +49,9 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<UsersList> getUsers({required String role}) async {
+  Future<UsersList> getUsers() async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'role': role};
+    final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _result = await _dio
@@ -104,7 +104,7 @@ class _ApiService implements ApiService {
 
   @override
   Future<HarvestTask> postHarvestTask(
-      {required CreateNewTaskReq createReq}) async {
+      {required CreateNewHarvestTaskReq createReq}) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -158,6 +158,92 @@ class _ApiService implements ApiService {
               baseUrl,
             ))));
     final value = HarvestTask.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<MainTaskResponse> getMainTasks() async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<MainTaskResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/tasks/main',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = MainTaskResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<SingleMainTaskResponse> patchMainTasks({
+    required String id,
+    required String hTask,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = hTask;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<SingleMainTaskResponse>(Options(
+      method: 'PATCH',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/tasks/main/${id}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = SingleMainTaskResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<SingleMainTaskResponse> postMainTask(
+      {required CreateNewMainTaskReq createReq}) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(createReq.toJson());
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<SingleMainTaskResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/tasks/main',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = SingleMainTaskResponse.fromJson(_result.data!);
     return value;
   }
 
