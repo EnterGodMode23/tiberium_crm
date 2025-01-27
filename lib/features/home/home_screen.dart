@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tiberium_crm/data/models/role_enum.dart';
-import 'package:tiberium_crm/features/app/routing/app_router.dart';
 import 'package:tiberium_crm/features/home/operators_home.dart';
 import 'package:tiberium_crm/features/home/sales_home.dart';
 import 'package:tiberium_crm/features/home/managers_home.dart';
@@ -62,27 +61,6 @@ class _HomePageState extends State<HomePage> {
 
   bool _isOperator() =>
       currRole == Role.harvestOperator || currRole == Role.processingOperator;
-
-  Future<void> _navigateToNewTaskPage(BuildContext context) async {
-    bool? result;
-    try {
-      if (currRole == Role.salesManager) {
-        result =
-            await AutoRouter.of(context).push(const NewPlanRoute()) as bool?;
-      } else {
-        result = await AutoRouter.of(context)
-            .push(NewTaskRoute(currRole: currRole)) as bool?;
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to update tasks: $e'),
-          ),
-        );
-      }
-    }
-  }
 
   Role _getCurrRole() =>
       RoleExtension.fromString(localStorage.getString('role')!);

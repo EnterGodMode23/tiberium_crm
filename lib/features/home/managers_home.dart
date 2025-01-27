@@ -5,6 +5,7 @@ import 'package:tiberium_crm/data/models/role_enum.dart';
 import 'package:tiberium_crm/features/app/routing/app_router.dart';
 import 'package:tiberium_crm/features/schedule/widgets/processing_task_entry.dart';
 import 'package:tiberium_crm/features/schedule/widgets/task_entry.dart';
+import 'package:tiberium_crm/features/utils/widgets/empty_tasks_list.dart';
 import 'package:tiberium_crm/repos/repository.dart';
 
 class ManagersHome extends StatefulWidget {
@@ -28,10 +29,12 @@ class _ManagersHomeState extends State<ManagersHome> {
   @override
   Widget build(BuildContext context) => Stack(
         children: [
-          SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Column(children: tasks),
-          ),
+          tasks.isNotEmpty
+              ? SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(children: tasks),
+                )
+              : const EmptyTasksList(),
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(

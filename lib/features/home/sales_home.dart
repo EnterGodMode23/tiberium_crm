@@ -28,7 +28,7 @@ class _SalesHomeState extends State<SalesHome> {
   }
 
   @override
-  Widget build(BuildContext context) => isTasksListsEmpty()
+  Widget build(BuildContext context) => _isTasksListsEmpty()
       ? const EmptyTasksList()
       : Stack(
           children: [
@@ -81,7 +81,7 @@ class _SalesHomeState extends State<SalesHome> {
     }
   }
 
-  bool isTasksListsEmpty() =>
+  bool _isTasksListsEmpty() =>
       mainTasks.isEmpty && procTasks.isEmpty && harvTasks.isEmpty;
 
   Future<void> _getTasks() async {

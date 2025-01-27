@@ -60,14 +60,17 @@ class _OperatorsHomeState extends State<OperatorsHome> {
                 ],
               ),
             ),
-            if (status != 'IN_PROGRESS')
+            if (status != 'DONE')
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: ElevatedButton(
-                  onPressed: () => _updateTaskStatus(context),
-                  child: const Text(
-                    'Start Task',
-                    style: TextStyle(fontSize: 32, color: Colors.black),
+                  onPressed: () => _updateTaskStatus(
+                    context,
+                    status == 'TO_DO' ? 'IN_PROGRESS' : 'DONE',
+                  ),
+                  child: Text(
+                    '${status == 'TO_DO' ? 'Start' : 'Finish'} Task',
+                    style: const TextStyle(fontSize: 32, color: Colors.black),
                   ),
                 ),
               ),
@@ -75,11 +78,11 @@ class _OperatorsHomeState extends State<OperatorsHome> {
         )
       : const EmptyTasksList();
 
-  Future<void> _updateTaskStatus(BuildContext context) async {
+  Future<void> _updateTaskStatus(BuildContext context, String status) async {
     try {
       final res = await rep.patchHarvestTasks(
         uid!,
-        '{"status": "IN_PROGRESS"}',
+        '{"status": "$status"}',
       );
       _getTaskDetails();
       if (res.data.uid.isNotEmpty && mounted) {

@@ -190,22 +190,31 @@ class _NewPlanPageState extends State<NewPlanPage> {
                           true) {
                         return;
                       }
-
-                      final res = (await rep.postMainTask(
-                        CreateNewMainTaskReq(
-                          processingManagerId: currProcessingUid,
-                          harvestManagerId: currHarvestUid,
-                          targetKilosToSale: double.tryParse(
-                            _taskFormKey.currentState!.value['amount'],
+                      try {
+                        await rep.postMainTask(
+                          CreateNewMainTaskReq(
+                            processingManagerId: currProcessingUid,
+                            harvestManagerId: currHarvestUid,
+                            targetKilosToSale: double.tryParse(
+                              _taskFormKey.currentState!.value['amount'],
+                            ),
+                            destination:
+                                _taskFormKey.currentState!.value['destination'],
+                            priority:
+                                _taskFormKey.currentState!.value['priority'],
+                            status: 'TO_DO',
                           ),
-                          destination:
-                              _taskFormKey.currentState!.value['destination'],
-                          priority:
-                              _taskFormKey.currentState!.value['priority'],
-                          status: 'TO_DO',
-                        ),
-                      ));
-                      AutoRouter.of(context).pop();
+                        );
+                        AutoRouter.of(context).pop();
+                      } catch (e) {
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Failed to create plan: $e'),
+                            ),
+                          );
+                        }
+                      }
                     },
                     child: Text(
                       'Create plan',

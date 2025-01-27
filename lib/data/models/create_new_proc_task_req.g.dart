@@ -9,6 +9,7 @@ part of 'create_new_proc_task_req.dart';
 CreateNewProcTaskReq _$CreateNewProcTaskReqFromJson(
         Map<String, dynamic> json) =>
     CreateNewProcTaskReq(
+      harvestTaskId: json['harvest_task_id'] as String,
       processingOperator: json['processing_operator_id'] as String,
       destination: json['destination'] as String,
       priority: (json['priority'] as num).toInt(),
@@ -20,6 +21,7 @@ CreateNewProcTaskReq _$CreateNewProcTaskReqFromJson(
 Map<String, dynamic> _$CreateNewProcTaskReqToJson(
         CreateNewProcTaskReq instance) =>
     <String, dynamic>{
+      'harvest_task_id': instance.harvestTaskId,
       'processing_operator_id': instance.processingOperator,
       'destination': instance.destination,
       'priority': instance.priority,

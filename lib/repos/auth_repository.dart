@@ -16,20 +16,16 @@ class AuthRepository {
   AuthRepository(this._authClient, this._storage);
 
   Future<bool> smsLogin(SmsLoginReq req) async {
-    try {
-      final response = await _authClient.smsLogin(smsLoginReq: req);
-      final LoggingInterceptor interceptor = GetIt.I.get();
-      interceptor.updateAuthHeader(response.data!.accessToken);
-      if (response.data?.user != null) {
-        _storage.setString(userKey, jsonEncode(response.data!.user));
-        _storage.setString(tokenKey, response.data!.accessToken);
-        _storage.setString(roleKey, response.data!.user.role.toStringX());
-        return true;
-      }
-      return false;
-    } catch (E) {
-      return false;
+    final response = await _authClient.smsLogin(smsLoginReq: req);
+    final LoggingInterceptor interceptor = GetIt.I.get();
+    interceptor.updateAuthHeader(response.data!.accessToken);
+    if (response.data?.user != null) {
+      _storage.setString(userKey, jsonEncode(response.data!.user));
+      _storage.setString(tokenKey, response.data!.accessToken);
+      _storage.setString(roleKey, response.data!.user.role.toStringX());
+      return true;
     }
+    return false;
   }
 
   Future<void> logout() async => await _storage.clear();

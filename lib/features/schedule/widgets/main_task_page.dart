@@ -111,7 +111,7 @@ class _MainTaskPageState extends State<MainTaskPage> {
                     onPressed: () => _updateTaskStatus(context),
                     child: Text(
                       _getButtonText(),
-                      style: const TextStyle(fontSize: 32),
+                      style: const TextStyle(fontSize: 32, color: Colors.black),
                     ),
                   ),
                 ),

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tiberium_crm/data/models/role_enum.dart';
-import 'package:tiberium_crm/features/schedule/managers/manager_schedule.dart';
 import 'package:tiberium_crm/features/schedule/widgets/main_task_entry.dart';
 import 'package:tiberium_crm/features/schedule/widgets/task_entry.dart';
 import 'package:tiberium_crm/features/schedule/widgets/processing_task_entry.dart';
@@ -49,16 +48,21 @@ class _SchedulePageState extends State<SchedulePage> {
             ),
           ),
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              ...harvestTasks,
-              ...procTasks,
-              ...mainTasks,
-            ],
-          ),
-        ),
+        body: _isTasksListsEmpty()
+            ? const EmptyTasksList()
+            : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    ...harvestTasks,
+                    ...procTasks,
+                    ...mainTasks,
+                  ],
+                ),
+              ),
       );
+
+  bool _isTasksListsEmpty() =>
+      mainTasks.isEmpty && procTasks.isEmpty && harvestTasks.isEmpty;
 
   Future<void> _getTasks() async {
     if (currRole == Role.harvestOperator) {

@@ -7,9 +7,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tiberium_crm/data/models/create_new_proc_task_req.dart';
 import 'package:tiberium_crm/data/models/create_new_harvest_task_req.dart';
 import 'package:tiberium_crm/data/models/role_enum.dart';
+import 'package:tiberium_crm/data/models/tasks/harvest_task.dart';
 import 'package:tiberium_crm/data/models/tasks/main_task.dart';
 import 'package:tiberium_crm/data/models/user.dart';
-import 'package:tiberium_crm/features/app/routing/app_router.dart';
 import 'package:tiberium_crm/repos/repository.dart';
 
 @RoutePage()
@@ -31,10 +31,12 @@ class _NewTaskPageState extends State<NewTaskPage> {
   final rep = GetIt.I.get<Repository>();
   late String currOperatorId;
   String? currMainTaskRef;
+  String? currHarvestTaskId;
   String? destination;
 
   List<DropdownMenuItem<User>> users = [];
   List<DropdownMenuItem<MainTask>> mainTasks = [];
+  List<DropdownMenuItem<HarvestTask>> harvestTasks = [];
 
   MainTask? currMainTask;
 
@@ -42,7 +44,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
   void initState() {
     _taskFormKey = GlobalKey();
     _getOperators();
-    _getMainTasks();
+    _getTasks();
     super.initState();
   }
 
@@ -82,7 +84,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
                       validator: FormBuilderValidators.compose(
                         [
                           FormBuilderValidators.required(
-                            errorText: 'Enter the task\'s destination',
+                            errorText: 'Enter the task\'s operator',
                           ),
                         ],
                       ),
@@ -91,32 +93,52 @@ class _NewTaskPageState extends State<NewTaskPage> {
                       items: users,
                     ),
                     const SizedBox(height: 16),
-                    FormBuilderDropdown(
-                      name: 'mainTaskRef',
-                      onChanged: (value) {
-                        setState(() {
-                          currMainTask = value;
-                          currMainTaskRef = currMainTask?.uid;
-                          destination = currMainTask?.destination;
-                          _taskFormKey.currentState?.fields['destination']
-                              ?.didChange(destination);
-                        });
-                      },
-                      items: mainTasks,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        labelText: 'Main task',
-                      ),
-                      validator: FormBuilderValidators.compose(
-                        [
-                          FormBuilderValidators.required(
-                            errorText: 'Enter the main task',
+                    widget.currRole == Role.harvestManager
+                        ? FormBuilderDropdown(
+                            name: 'mainTaskRef',
+                            onChanged: (value) {
+                              setState(() {
+                                currMainTask = value;
+                                currMainTaskRef = currMainTask?.uid;
+                                destination = currMainTask?.destination;
+                                _taskFormKey.currentState?.fields['destination']
+                                    ?.didChange(destination);
+                              });
+                            },
+                            items: mainTasks,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                              labelText: 'Main task',
+                            ),
+                            validator: FormBuilderValidators.compose(
+                              [
+                                FormBuilderValidators.required(
+                                  errorText: 'Enter the main task',
+                                ),
+                              ],
+                            ),
+                          )
+                        : FormBuilderDropdown(
+                            name: 'harvestTaskId',
+                            onChanged: (value) =>
+                                setState(() => currHarvestTaskId = value?.uid),
+                            items: harvestTasks,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                              labelText: 'Harvest task',
+                            ),
+                            validator: FormBuilderValidators.compose(
+                              [
+                                FormBuilderValidators.required(
+                                  errorText: 'Enter the harvest task',
+                                ),
+                              ],
+                            ),
                           ),
-                        ],
-                      ),
-                    ),
                     const SizedBox(height: 16),
                     FormBuilderDropdown(
                       name: 'priority',
@@ -186,7 +208,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
                         ? _createHarvestTask()
                         : _createProcessingTask(),
                     child: Text(
-                      'Create Task',
+                      'Create task',
                       style: Theme.of(context)
                           .textTheme
                           .bodyMedium
@@ -205,17 +227,26 @@ class _NewTaskPageState extends State<NewTaskPage> {
       return;
     }
 
-    final res = await rep.postProcessingTask(
-      CreateNewProcTaskReq(
-        processingOperator: currOperatorId,
-        destination: destination ?? 'Unknown',
-        priority: _taskFormKey.currentState!.value['priority'],
-        mainTaskRef: currMainTaskRef ?? 'Unknown main task ref',
-        killos: double.parse(_taskFormKey.currentState!.value['kilos']),
-        status: 'TO_DO',
-      ),
-    );
-    AutoRouter.of(context).maybePop(res.data.uid?.isNotEmpty ?? false);
+    try {
+      final res = await rep.postProcessingTask(
+        CreateNewProcTaskReq(
+          harvestTaskId: currHarvestTaskId ?? 'Unknown',
+          processingOperator: currOperatorId,
+          destination: destination ?? 'Unknown',
+          priority: _taskFormKey.currentState!.value['priority'],
+          mainTaskRef: currMainTaskRef ?? 'Unknown main task ref',
+          killos: double.parse(_taskFormKey.currentState!.value['kilos']),
+          status: 'TO_DO',
+        ),
+      );
+      AutoRouter.of(context).maybePop(res.data.uid?.isNotEmpty ?? false);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to create task: $e')),
+        );
+      }
+    }
   }
 
   Future<void> _createHarvestTask() async {
@@ -223,18 +254,25 @@ class _NewTaskPageState extends State<NewTaskPage> {
       return;
     }
 
-    final res = await rep.postHarvestTask(
-      CreateNewHarvestTaskReq(
-        harvestOperator: currOperatorId,
-        destination: destination ?? 'Unknown',
-        priority: _taskFormKey.currentState!.value['priority'],
-        mainTaskRef: currMainTaskRef ?? 'Task ref is null',
-        killos: double.parse(_taskFormKey.currentState!.value['kilos']),
-        status: 'TO_DO',
-      ),
-    );
-
-    AutoRouter.of(context).maybePop(res.data.uid.isNotEmpty);
+    try {
+      final res = await rep.postHarvestTask(
+        CreateNewHarvestTaskReq(
+          harvestOperator: currOperatorId,
+          destination: destination ?? 'Unknown',
+          priority: _taskFormKey.currentState!.value['priority'],
+          mainTaskRef: currMainTaskRef ?? 'Unknown main task ref',
+          killos: double.parse(_taskFormKey.currentState!.value['kilos']),
+          status: 'TO_DO',
+        ),
+      );
+      AutoRouter.of(context).maybePop(res.data.uid.isNotEmpty);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to create task: $e')),
+        );
+      }
+    }
   }
 
   Future<void> _getOperators() async {
@@ -253,7 +291,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
     }
   }
 
-  Future<void> _getMainTasks() async {
+  Future<void> _getTasks() async {
     final list = await rep.getMainTasks();
 
     final items = list.data
@@ -266,6 +304,24 @@ class _NewTaskPageState extends State<NewTaskPage> {
         .toList();
     if (mounted) {
       setState(() => mainTasks = items);
+    }
+
+    if (widget.currRole == Role.processingManager) _getHarvestTasks();
+  }
+
+  Future<void> _getHarvestTasks() async {
+    final list = await rep.getHarvestTasks();
+
+    final items = list.harvestTasks
+        ?.map(
+          (task) => DropdownMenuItem(
+            value: task,
+            child: Text(task.destination ?? 'Unknown'),
+          ),
+        )
+        .toList();
+    if (mounted) {
+      setState(() => harvestTasks = items ?? []);
     }
   }
 }

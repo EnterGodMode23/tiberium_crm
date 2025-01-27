@@ -57,16 +57,6 @@ class _HarvestTaskEntryState extends State<HarvestTaskEntry> {
     );
   }
 
-  List<Widget> _getManagerShedule() => [
-        if (!_isOperator())
-          ManagerTaskCard(
-            destination: widget.task.destination ?? 'Unknown',
-            targetKilos: widget.task.targetKilosToHarvest?.toInt() ?? 0,
-            priority: widget.task.priority ?? 0,
-            manager: widget.task.harvestManager,
-          ),
-      ];
-
   bool _isOperator() {
     final role = localStorage.getString('role');
     return role == 'HARVEST_OPERATOR' || role == 'PROCESSING_OPERATOR';

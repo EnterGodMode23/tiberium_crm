@@ -4,6 +4,8 @@ part 'create_new_proc_task_req.g.dart';
 
 @JsonSerializable()
 class CreateNewProcTaskReq {
+  @JsonKey(name: 'harvest_task_id')
+  String harvestTaskId;
   @JsonKey(name: 'processing_operator_id')
   String processingOperator;
   @JsonKey(name: 'destination')
@@ -17,6 +19,7 @@ class CreateNewProcTaskReq {
   String status;
 
   CreateNewProcTaskReq({
+    required this.harvestTaskId,
     required this.processingOperator,
     required this.destination,
     required this.priority,
