@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tiberium_crm/data/models/tasks/harvest_task.dart';
+import 'package:tiberium_crm/features/schedule/widgets/operator_task_card.dart';
 import 'package:tiberium_crm/repos/repository.dart';
 
 @RoutePage()
@@ -33,158 +34,106 @@ class _HarvestTaskPageState extends State<HarvestTaskPage> {
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
           title: Align(
-            alignment: Alignment.topLeft,
+            alignment: Alignment.centerLeft,
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Text(
-                'Task Info',
+                'Task Details',
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
             ),
           ),
         ),
         body: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  alignment: FractionalOffset.center,
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    children: [
-                      const Text(
-                        'Task ID:',
-                      ),
-                      Text(
-                        widget.task.uid,
-                        style: const TextStyle(color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                ),
-                Row(
+          child: Column(
+            children: [
+              OperatorTaskCard(
+                destination: widget.task.destination ?? 'Unknown',
+                priority: widget.task.priority ?? 0,
+                status: widget.task.status,
+                operator: widget.task.harvestOperator,
+                targetKilos: widget.task.targetKilosToHarvest?.toDouble() ?? 0,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
                   children: [
-                    const Expanded(
-                      flex: 1,
-                      child: Text(
-                        'Type:',
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Text(widget.task.runtimeType.toString()),
+                    _buildInfoRow('Task ID', widget.task.uid),
+                    const SizedBox(height: 16),
+                    _buildInfoRow(
+                      'Harvest Manager',
+                      widget.task.harvestManager != null
+                          ? '${widget.task.harvestManager?.firstName} ${widget.task.harvestManager?.lastName}'
+                          : 'Not assigned',
                     ),
                   ],
                 ),
-                const Padding(padding: EdgeInsets.all(12)),
-                Row(
-                  children: [
-                    const Expanded(
-                      flex: 1,
-                      child: Text(
-                        'Current status:',
-                      ),
-                    ),
-                    Expanded(flex: 1, child: Text(widget.task.status)),
-                  ],
-                ),
-                const Padding(padding: EdgeInsets.all(12)),
-                Row(
-                  children: [
-                    const Expanded(
-                      flex: 1,
-                      child: Text(
-                        'Target Destination:',
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Text(widget.task.destination ?? 'Unknown'),
-                    ),
-                  ],
-                ),
-                const Padding(padding: EdgeInsets.all(12)),
-                const Row(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Text(
-                        'Operator:',
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Text('{widget.task?.firstName} '
-                          '{widget.task.harvestOperator?.lastName}'),
-                    ),
-                  ],
-                ),
-                const Padding(padding: EdgeInsets.all(12)),
-                Row(
-                  children: [
-                    const Expanded(
-                      flex: 1,
-                      child: Text(
-                        'Priority:',
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Text(widget.task.priority.toString()),
-                    ),
-                  ],
-                ),
-                const Padding(padding: EdgeInsets.all(12)),
-                const Row(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Text(
-                        'Creation date:',
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Text('widget.task.created'),
-                    ),
-                  ],
-                ),
-                const Padding(padding: EdgeInsets.all(20)),
-                if ((currRole == 'HARVEST_OPERATOR' ||
-                        currRole == 'PROCESSING_OPERATOR') &&
-                    widget.task.status != 'IN_PROGRESS')
-                  ElevatedButton(
-                    style: Theme.of(context).elevatedButtonTheme.style,
-                    onPressed: () async {
-                      final res = await rep.patchHarvestTasks(
-                        widget.task.uid,
-                        '{"status": "IN_PROGRESS"}',
-                      );
-                      if (res.data.uid.isNotEmpty) {
-                        print(res);
-                        AutoRouter.of(context).maybePop(true);
-                      } else {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return const AlertDialog(
-                              title: Text('Incorrect input'),
-                            );
-                          },
-                        );
-                        AutoRouter.of(context).maybePop(false);
-                      }
-                    },
+              ),
+              if ((currRole == 'HARVEST_OPERATOR' ||
+                      currRole == 'PROCESSING_OPERATOR') &&
+                  widget.task.status != 'IN_PROGRESS')
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: ElevatedButton(
+                    onPressed: () => _updateTaskStatus(context),
                     child: const Text(
-                      'Accept Task',
-                      style: TextStyle(color: Colors.black87, fontSize: 32),
+                      'Start Task',
+                      style: TextStyle(fontSize: 32),
                     ),
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
         ),
       );
+
+  Widget _buildInfoRow(String label, String value) => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[600],
+            ),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      );
+
+  Future<void> _updateTaskStatus(BuildContext context) async {
+    try {
+      final res = await rep.patchHarvestTasks(
+        widget.task.uid,
+        '{"status": "IN_PROGRESS"}',
+      );
+      if (res.data.uid.isNotEmpty) {
+        if (mounted) {
+          AutoRouter.of(context).pop(true);
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text('Error'),
+            content: Text('Failed to update task status: $e'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+    }
+  }
 }

@@ -29,7 +29,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
   late final GlobalKey<FormBuilderState> _taskFormKey;
   final SharedPreferences localStorage = GetIt.I.get();
   final rep = GetIt.I.get<Repository>();
-  late String currUid;
+  late String currOperatorId;
   String? currMainTaskRef;
   String? destination;
 
@@ -86,7 +86,8 @@ class _NewTaskPageState extends State<NewTaskPage> {
                           ),
                         ],
                       ),
-                      onChanged: (value) => currUid = value?.uid ?? 'Unknown',
+                      onChanged: (value) =>
+                          currOperatorId = value?.uid ?? 'Unknown',
                       items: users,
                     ),
                     const SizedBox(height: 16),
@@ -162,6 +163,13 @@ class _NewTaskPageState extends State<NewTaskPage> {
                           FormBuilderValidators.required(
                             errorText: 'Enter the tiberium amount',
                           ),
+                          FormBuilderValidators.numeric(
+                            errorText: 'Enter a valid number',
+                          ),
+                          FormBuilderValidators.min(
+                            0,
+                            errorText: 'Amount must be greater than 0',
+                          ),
                         ],
                       ),
                     ),
@@ -199,29 +207,15 @@ class _NewTaskPageState extends State<NewTaskPage> {
 
     final res = await rep.postProcessingTask(
       CreateNewProcTaskReq(
-        processingOperator: currUid,
+        processingOperator: currOperatorId,
         destination: destination ?? 'Unknown',
         priority: _taskFormKey.currentState!.value['priority'],
         mainTaskRef: currMainTaskRef ?? 'Unknown main task ref',
-        killos: _taskFormKey.currentState!.value['kilos'],
+        killos: double.parse(_taskFormKey.currentState!.value['kilos']),
         status: 'TO_DO',
       ),
     );
-
-    if (res.uid?.isNotEmpty ?? false) {
-      print(res);
-      AutoRouter.of(context).navigate(ProcessingTaskRoute(task: res));
-      AutoRouter.of(context).maybePop(true);
-    } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => const AlertDialog(
-          title: Text('Incorrect input'),
-        ),
-      );
-      AutoRouter.of(context).navigate(const ScheduleRoute());
-      AutoRouter.of(context).maybePop(false);
-    }
+    AutoRouter.of(context).maybePop(res.data.uid?.isNotEmpty ?? false);
   }
 
   Future<void> _createHarvestTask() async {
@@ -231,29 +225,16 @@ class _NewTaskPageState extends State<NewTaskPage> {
 
     final res = await rep.postHarvestTask(
       CreateNewHarvestTaskReq(
-        processingOperator: currUid,
+        harvestOperator: currOperatorId,
         destination: destination ?? 'Unknown',
         priority: _taskFormKey.currentState!.value['priority'],
         mainTaskRef: currMainTaskRef ?? 'Task ref is null',
-        killos: int.parse(_taskFormKey.currentState!.value['kilos']),
+        killos: double.parse(_taskFormKey.currentState!.value['kilos']),
         status: 'TO_DO',
       ),
     );
 
-    if (res.data.uid.isNotEmpty) {
-      print(res);
-      AutoRouter.of(context).navigate(HarvestTaskRoute(task: res.data));
-      AutoRouter.of(context).maybePop(true);
-    } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => const AlertDialog(
-          title: Text('Incorrect input'),
-        ),
-      );
-      AutoRouter.of(context).navigate(const ScheduleRoute());
-      AutoRouter.of(context).maybePop(false);
-    }
+    AutoRouter.of(context).maybePop(res.data.uid.isNotEmpty);
   }
 
   Future<void> _getOperators() async {

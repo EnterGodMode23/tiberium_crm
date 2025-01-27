@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:tiberium_crm/data/models/tasks/main_task.dart';
 import 'package:tiberium_crm/features/app/routing/app_router.dart';
+import 'package:tiberium_crm/features/schedule/widgets/manager_task_card.dart';
 
 class MainTaskEntry extends StatefulWidget {
   final MainTask task;
@@ -26,28 +27,16 @@ class _MainTaskEntryState extends State<MainTaskEntry> {
           MainTaskRoute(task: widget.task),
         );
         if (result == true) {
-          widget.onTaskUpdated(); // Call the callback function
+          widget.onTaskUpdated();
         }
       },
-      child: Column(children: [
-        const Divider(color: Colors.black87),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            children: [
-              Expanded(flex: 1, child: Text(widget.task.priority.toString())),
-              Expanded(
-                  flex: 2, child: Text(widget.task.destination ?? 'Unknown')),
-              Expanded(
-                flex: 2,
-                child: Text('{widget.task.processingOperator?.firstName} '
-                    '{widget.task.processingOperator?.lastName}'),
-              ),
-            ],
-          ),
-        ),
-        const Divider(color: Colors.black87),
-      ]),
+      child: ManagerTaskCard(
+        destination: widget.task.destination,
+        targetKilos: widget.task.targetKilosToSale,
+        priority: widget.task.priority,
+        manager: widget.task.salesManager,
+        managerTitle: 'Sales Manager',
+      ),
     );
   }
 }

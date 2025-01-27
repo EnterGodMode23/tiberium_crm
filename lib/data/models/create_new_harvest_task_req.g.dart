@@ -9,18 +9,18 @@ part of 'create_new_harvest_task_req.dart';
 CreateNewHarvestTaskReq _$CreateNewHarvestTaskReqFromJson(
         Map<String, dynamic> json) =>
     CreateNewHarvestTaskReq(
-      processingOperator: json['harvest_operator_id'] as String,
+      harvestOperator: json['harvest_operator_id'] as String,
       destination: json['destination'] as String,
       priority: (json['priority'] as num).toInt(),
       mainTaskRef: json['main_task_ref'] as String,
-      killos: (json['target_kilos_to_harvest'] as num).toInt(),
+      killos: (json['target_kilos_to_harvest'] as num).toDouble(),
       status: json['status'] as String,
     );
 
 Map<String, dynamic> _$CreateNewHarvestTaskReqToJson(
         CreateNewHarvestTaskReq instance) =>
     <String, dynamic>{
-      'harvest_operator_id': instance.processingOperator,
+      'harvest_operator_id': instance.harvestOperator,
       'destination': instance.destination,
       'priority': instance.priority,
       'main_task_ref': instance.mainTaskRef,

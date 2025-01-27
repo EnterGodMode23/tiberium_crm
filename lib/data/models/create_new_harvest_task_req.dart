@@ -5,7 +5,7 @@ part 'create_new_harvest_task_req.g.dart';
 @JsonSerializable()
 class CreateNewHarvestTaskReq {
   @JsonKey(name: 'harvest_operator_id')
-  String processingOperator;
+  String harvestOperator;
   @JsonKey(name: 'destination')
   String destination;
   @JsonKey(name: 'priority')
@@ -13,11 +13,11 @@ class CreateNewHarvestTaskReq {
   @JsonKey(name: 'main_task_ref')
   String mainTaskRef;
   @JsonKey(name: 'target_kilos_to_harvest')
-  int killos;
+  double killos;
   String status;
 
   CreateNewHarvestTaskReq({
-    required this.processingOperator,
+    required this.harvestOperator,
     required this.destination,
     required this.priority,
     required this.mainTaskRef,

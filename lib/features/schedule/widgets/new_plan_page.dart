@@ -7,7 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tiberium_crm/data/models/create_new_main_task_req.dart';
 import 'package:tiberium_crm/data/models/role_enum.dart';
 import 'package:tiberium_crm/data/models/user.dart';
-import 'package:tiberium_crm/features/app/routing/app_router.dart';
 import 'package:tiberium_crm/repos/repository.dart';
 
 @RoutePage()
@@ -118,6 +117,13 @@ class _NewPlanPageState extends State<NewPlanPage> {
                           FormBuilderValidators.required(
                             errorText: 'Enter the tiberium amount',
                           ),
+                          FormBuilderValidators.numeric(
+                            errorText: 'Enter a valid number',
+                          ),
+                          FormBuilderValidators.min(
+                            0,
+                            errorText: 'Amount must be greater than 0',
+                          ),
                         ],
                       ),
                     ),
@@ -189,21 +195,20 @@ class _NewPlanPageState extends State<NewPlanPage> {
                         CreateNewMainTaskReq(
                           processingManagerId: currProcessingUid,
                           harvestManagerId: currHarvestUid,
-                          targetKilosToSale: int.tryParse(
+                          targetKilosToSale: double.tryParse(
                             _taskFormKey.currentState!.value['amount'],
                           ),
                           destination:
                               _taskFormKey.currentState!.value['destination'],
                           priority:
                               _taskFormKey.currentState!.value['priority'],
-                          status: 'DRAFT',
+                          status: 'TO_DO',
                         ),
-                      ))
-                          .data;
-                      AutoRouter.of(context).navigate(const ScheduleRoute());
+                      ));
+                      AutoRouter.of(context).pop();
                     },
                     child: Text(
-                      'Create Task',
+                      'Create plan',
                       style: Theme.of(context)
                           .textTheme
                           .bodyMedium

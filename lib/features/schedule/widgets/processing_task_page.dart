@@ -5,7 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tiberium_crm/data/models/tasks/processing_task.dart';
 import 'package:tiberium_crm/repos/repository.dart';
 
-
 @RoutePage()
 class ProcessingTaskPage extends StatefulWidget {
   final ProcessingTask task;
@@ -115,8 +114,9 @@ class _ProcessingTaskPageState extends State<ProcessingTaskPage> {
                   ),
                   Expanded(
                       flex: 1,
-                      child: Text('${widget.task.processingOperator?.firstName} '
-                          '${widget.task.processingOperator?.lastName}')),
+                      child:
+                          Text('${widget.task.processingOperator?.firstName} '
+                              '${widget.task.processingOperator?.lastName}')),
                 ],
               ),
               const Padding(padding: EdgeInsets.all(12)),
@@ -149,7 +149,7 @@ class _ProcessingTaskPageState extends State<ProcessingTaskPage> {
               ),
               const Padding(padding: EdgeInsets.all(20)),
               if ((currRole == 'HARVEST_OPERATOR' ||
-                  currRole == 'PROCESSING_OPERATOR') &&
+                      currRole == 'PROCESSING_OPERATOR') &&
                   widget.task.status != 'IN_PROGRESS')
                 ElevatedButton(
                   style: Theme.of(context).elevatedButtonTheme.style,
@@ -158,7 +158,7 @@ class _ProcessingTaskPageState extends State<ProcessingTaskPage> {
                       widget.task.uid ?? 'NONE',
                       '{"status": "IN_PROGRESS"}',
                     );
-                    if (res.uid?.isNotEmpty ?? false) {
+                    if (res.data.uid?.isNotEmpty ?? false) {
                       print(res);
                       AutoRouter.of(context).maybePop(true);
                     } else {

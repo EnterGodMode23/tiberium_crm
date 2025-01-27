@@ -12,6 +12,7 @@ import 'package:tiberium_crm/data/models/tasks/main_task_response.dart';
 import 'package:tiberium_crm/data/models/tasks/processing_task.dart';
 import 'package:tiberium_crm/data/models/tasks/processing_task_list.dart';
 import 'package:tiberium_crm/data/models/tasks/single_harvest_task_response.dart';
+import 'package:tiberium_crm/data/models/tasks/single_proc_task_response.dart';
 import 'package:tiberium_crm/data/models/users_list.dart';
 import 'package:tiberium_crm/data/models/tasks/single_main_task_response.dart';
 import 'package:tiberium_crm/infra/network/base/server_urls.dart';
@@ -62,12 +63,12 @@ abstract class ApiService {
   Future<ProcessingTaskList> getProcessingTasks();
 
   @POST(processingTasksUrl)
-  Future<ProcessingTask> postProcessingTask({
+  Future<SingleProcessingTaskResponse> postProcessingTask({
     @Body() required final CreateNewProcTaskReq createReq,
   });
 
   @PATCH('$processingTasksUrl/{uid}')
-  Future<ProcessingTask> patchProcessingTasks({
+  Future<SingleProcessingTaskResponse> patchProcessingTasks({
     @Path('uid') required final String id,
     @Body() required final String pTask,
   });

@@ -13,7 +13,7 @@ CreateNewProcTaskReq _$CreateNewProcTaskReqFromJson(
       destination: json['destination'] as String,
       priority: (json['priority'] as num).toInt(),
       mainTaskRef: json['main_task_ref'] as String,
-      killos: (json['processed_kilos'] as num).toInt(),
+      killos: (json['processed_kilos'] as num).toDouble(),
       status: json['status'] as String,
     );
 

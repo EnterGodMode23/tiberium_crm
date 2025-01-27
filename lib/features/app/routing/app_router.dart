@@ -43,5 +43,6 @@ class AppRouter extends _$AppRouter {
         AdaptiveRoute(page: NewTaskRoute.page),
         AdaptiveRoute(page: NewPlanRoute.page),
         AdaptiveRoute(page: ProcessingTaskRoute.page),
+        AdaptiveRoute(page: MainTaskRoute.page),
       ];
 }

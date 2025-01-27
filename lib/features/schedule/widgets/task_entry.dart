@@ -5,6 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tiberium_crm/data/models/tasks/harvest_task.dart';
 import 'package:tiberium_crm/features/app/routing/app_router.dart';
 import 'package:tiberium_crm/features/schedule/widgets/task_details_card.dart';
+import 'package:tiberium_crm/features/schedule/widgets/manager_task_card.dart';
+import 'package:tiberium_crm/features/schedule/widgets/operator_task_card.dart';
 
 class HarvestTaskEntry extends StatefulWidget {
   final HarvestTask task;
@@ -43,32 +45,26 @@ class _HarvestTaskEntryState extends State<HarvestTaskEntry> {
               status: widget.task.status,
             )
           else
-            ..._getManagerShedule(),
+            OperatorTaskCard(
+              destination: widget.task.destination ?? 'Unknown',
+              priority: widget.task.priority ?? 0,
+              status: widget.task.status,
+              operator: widget.task.harvestOperator,
+              targetKilos: widget.task.targetKilosToHarvest?.toDouble() ?? 0,
+            ),
         ],
       ),
     );
   }
 
   List<Widget> _getManagerShedule() => [
-        const Divider(color: Colors.black87),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            children: [
-              Expanded(flex: 1, child: Text(widget.task.priority.toString())),
-              Expanded(
-                flex: 2,
-                child: Text(widget.task.destination ?? 'Unknown'),
-              ),
-              Expanded(
-                flex: 2,
-                child: Text('${widget.task.harvestOperator?.firstName} '
-                    '${widget.task.harvestOperator?.lastName}'),
-              ),
-            ],
+        if (!_isOperator())
+          ManagerTaskCard(
+            destination: widget.task.destination ?? 'Unknown',
+            targetKilos: widget.task.targetKilosToHarvest?.toInt() ?? 0,
+            priority: widget.task.priority ?? 0,
+            manager: widget.task.harvestManager,
           ),
-        ),
-        const Divider(color: Colors.black87),
       ];
 
   bool _isOperator() {

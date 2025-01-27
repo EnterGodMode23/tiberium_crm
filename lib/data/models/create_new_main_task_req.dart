@@ -1,7 +1,7 @@
 class CreateNewMainTaskReq {
   String? processingManagerId;
   String? harvestManagerId;
-  int? targetKilosToSale;
+  double? targetKilosToSale;
   int? priority;
   String? destination;
   String? status;

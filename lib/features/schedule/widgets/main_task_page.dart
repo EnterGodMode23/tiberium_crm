@@ -3,16 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tiberium_crm/data/models/tasks/main_task.dart';
+import 'package:tiberium_crm/features/schedule/widgets/manager_task_card.dart';
 import 'package:tiberium_crm/repos/repository.dart';
 
 @RoutePage()
 class MainTaskPage extends StatefulWidget {
   final MainTask task;
 
-  const MainTaskPage({
-    required this.task,
-    super.key,
-  });
+  const MainTaskPage({required this.task, super.key});
 
   @override
   State<MainTaskPage> createState() => _MainTaskPageState();
@@ -29,165 +27,149 @@ class _MainTaskPageState extends State<MainTaskPage> {
     super.initState();
   }
 
+  String _getNextStatus() {
+    switch (widget.task.status) {
+      case 'TO_DO':
+        return 'HARVESTING';
+      case 'HARVESTING':
+        return 'PROCESSING';
+      case 'PROCESSING':
+        return 'COMPLETED';
+      default:
+        return widget.task.status ?? 'TO_DO';
+    }
+  }
+
+  String _getButtonText() {
+    switch (widget.task.status) {
+      case 'TO_DO':
+        return 'Start Harvesting';
+      case 'HARVESTING':
+        return 'Move to Processing';
+      case 'PROCESSING':
+        return 'Complete Task';
+      default:
+        return 'Update Status';
+    }
+  }
+
+  bool _shouldShowButton() {
+    if (currRole == 'HARVEST_MANAGER') {
+      return widget.task.status != 'COMPLETED';
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
           title: Align(
-            alignment: Alignment.topLeft,
+            alignment: Alignment.centerLeft,
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Text(
-                'Task Info',
+                'Task Details',
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
             ),
           ),
         ),
         body: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  alignment: FractionalOffset.center,
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    children: [
-                      const Text(
-                        'Task ID:',
-                      ),
-                      Text(
-                        widget.task.uid,
-                        style: const TextStyle(color: Colors.grey),
-                      ),
-                    ],
+          child: Column(
+            children: [
+              ManagerTaskCard(
+                destination: widget.task.destination,
+                targetKilos: widget.task.targetKilosToSale,
+                priority: widget.task.priority,
+                manager: widget.task.salesManager,
+                managerTitle: 'Sales Manager',
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    _buildInfoRow('Status', widget.task.status ?? 'TO_DO'),
+                    const SizedBox(height: 16),
+                    _buildInfoRow('Task ID', widget.task.uid),
+                    const SizedBox(height: 16),
+                    _buildInfoRow(
+                      'Processing Manager',
+                      '${widget.task.processingManager.firstName} ${widget.task.processingManager.lastName}',
+                    ),
+                    const SizedBox(height: 16),
+                    _buildInfoRow(
+                      'Harvest Manager',
+                      '${widget.task.harvestManager.firstName} ${widget.task.harvestManager.lastName}',
+                    ),
+                  ],
+                ),
+              ),
+              if (_shouldShowButton())
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: ElevatedButton(
+                    onPressed: () => _updateTaskStatus(context),
+                    child: Text(
+                      _getButtonText(),
+                      style: const TextStyle(fontSize: 32),
+                    ),
                   ),
                 ),
-                Row(
-                  children: [
-                    const Expanded(
-                      flex: 1,
-                      child: Text(
-                        'Type:',
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Text(widget.task.runtimeType.toString()),
-                    ),
-                  ],
-                ),
-                const Padding(padding: EdgeInsets.all(12)),
-                Row(
-                  children: [
-                    const Expanded(
-                      flex: 1,
-                      child: Text(
-                        'Current status:',
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Text(widget.task.status ?? 'TO_DO'),
-                    ),
-                  ],
-                ),
-                const Padding(padding: EdgeInsets.all(12)),
-                Row(
-                  children: [
-                    const Expanded(
-                      flex: 1,
-                      child: Text(
-                        'Target Destination:',
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Text(widget.task.destination ?? 'Unknown'),
-                    ),
-                  ],
-                ),
-                const Padding(padding: EdgeInsets.all(12)),
-                const Row(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Text(
-                        'Operator:',
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Text(''
-                          ''),
-                    ),
-                  ],
-                ),
-                const Padding(padding: EdgeInsets.all(12)),
-                Row(
-                  children: [
-                    const Expanded(
-                      flex: 1,
-                      child: Text(
-                        'Priority:',
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Text(widget.task.priority.toString()),
-                    ),
-                  ],
-                ),
-                const Padding(padding: EdgeInsets.all(12)),
-                Row(
-                  children: [
-                    const Expanded(
-                      flex: 1,
-                      child: Text(
-                        'Creation date:',
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Text(widget.task.processingManagerId),
-                    ),
-                  ],
-                ),
-                const Padding(padding: EdgeInsets.all(20)),
-                if ((currRole == 'HARVEST_OPERATOR' ||
-                        currRole == 'PROCESSING_OPERATOR') &&
-                    widget.task.status != 'IN_PROGRESS')
-                  ElevatedButton(
-                    style: Theme.of(context).elevatedButtonTheme.style,
-                    onPressed: () async {
-                      final res = (await rep.patchMainTasks(
-                        widget.task.uid,
-                        '{"status": "IN_PROGRESS"}',
-                      ));
-                      if (res.data.uid.isNotEmpty) {
-                        print(res);
-                        AutoRouter.of(context).maybePop(true);
-                      } else {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return const AlertDialog(
-                              title: Text('Incorrect input'),
-                            );
-                          },
-                        );
-                        AutoRouter.of(context).maybePop(false);
-                      }
-                    },
-                    child: const Text(
-                      'Accept Task',
-                      style: TextStyle(color: Colors.black87, fontSize: 32),
-                    ),
-                  ),
-              ],
-            ),
+            ],
           ),
         ),
       );
+
+  Widget _buildInfoRow(String label, String value) => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[600],
+            ),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      );
+
+  Future<void> _updateTaskStatus(BuildContext context) async {
+    try {
+      final nextStatus = _getNextStatus();
+      final res = await rep.patchMainTasks(
+        widget.task.uid,
+        '{"status": "$nextStatus"}',
+      );
+
+      if (res.data.uid.isNotEmpty) {
+        if (mounted) {
+          await rep.getMainTasks();
+          AutoRouter.of(context).pop(true);
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text('Error'),
+            content: Text('Failed to update task status: $e'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+    }
+  }
 }

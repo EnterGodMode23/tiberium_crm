@@ -13,6 +13,7 @@ import 'package:tiberium_crm/data/models/tasks/processing_task.dart';
 import 'package:tiberium_crm/data/models/tasks/processing_task_list.dart';
 import 'package:tiberium_crm/data/models/tasks/single_harvest_task_response.dart';
 import 'package:tiberium_crm/data/models/tasks/single_main_task_response.dart';
+import 'package:tiberium_crm/data/models/tasks/single_proc_task_response.dart';
 import 'package:tiberium_crm/data/models/users_list.dart';
 import 'package:tiberium_crm/infra/network/api_service.dart';
 import 'package:get_it/get_it.dart';
@@ -28,10 +29,14 @@ class Repository {
   Future<HarvestTaskList> getHarvestTasks() async =>
       await client.getHarvestTasks();
 
-  Future<MainTaskResponse> getMainTasks() async => await client.getMainTasks();
+  Future<MainTaskResponse> getMainTasks() async {
+    final response = await client.getMainTasks();
+    return response;
+  }
 
   Future<SingleHarvestTaskResponse> postHarvestTask(
-      CreateNewHarvestTaskReq req) async {
+    CreateNewHarvestTaskReq req,
+  ) async {
     final resp = await client.postHarvestTask(createReq: req);
     return resp;
   }
@@ -41,21 +46,31 @@ class Repository {
     return resp;
   }
 
-  Future<SingleHarvestTaskResponse> patchHarvestTasks(String uid, String hTask) async =>
+  Future<SingleHarvestTaskResponse> patchHarvestTasks(
+    String uid,
+    String hTask,
+  ) async =>
       await client.patchHarvestTasks(id: uid, hTask: hTask);
 
   Future<SingleMainTaskResponse> patchMainTasks(
-          String uid, String hTask) async =>
+    String uid,
+    String hTask,
+  ) async =>
       await client.patchMainTasks(id: uid, hTask: hTask);
 
   Future<ProcessingTaskList> getProcessingTasks() async =>
       await client.getProcessingTasks();
 
-  Future<ProcessingTask> postProcessingTask(CreateNewProcTaskReq req) async {
+  Future<SingleProcessingTaskResponse> postProcessingTask(
+    CreateNewProcTaskReq req,
+  ) async {
     final resp = await client.postProcessingTask(createReq: req);
     return resp;
   }
 
-  Future<ProcessingTask> patchProcessingTasks(String uid, String pTask) async =>
+  Future<SingleProcessingTaskResponse> patchProcessingTasks(
+    String uid,
+    String pTask,
+  ) async =>
       await client.patchProcessingTasks(id: uid, pTask: pTask);
 }

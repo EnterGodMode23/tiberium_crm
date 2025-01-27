@@ -275,15 +275,15 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<ProcessingTask> postProcessingTask(
+  Future<SingleProcessingTaskResponse> postProcessingTask(
       {required CreateNewProcTaskReq createReq}) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(createReq.toJson());
-    final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<ProcessingTask>(Options(
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<SingleProcessingTaskResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -299,12 +299,12 @@ class _ApiService implements ApiService {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = ProcessingTask.fromJson(_result.data!);
+    final value = SingleProcessingTaskResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<ProcessingTask> patchProcessingTasks({
+  Future<SingleProcessingTaskResponse> patchProcessingTasks({
     required String id,
     required String pTask,
   }) async {
@@ -312,8 +312,8 @@ class _ApiService implements ApiService {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = pTask;
-    final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<ProcessingTask>(Options(
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<SingleProcessingTaskResponse>(Options(
       method: 'PATCH',
       headers: _headers,
       extra: _extra,
@@ -329,7 +329,7 @@ class _ApiService implements ApiService {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = ProcessingTask.fromJson(_result.data!);
+    final value = SingleProcessingTaskResponse.fromJson(_result.data!);
     return value;
   }
 

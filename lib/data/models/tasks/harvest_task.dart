@@ -6,7 +6,7 @@ class HarvestTask {
   String? updated;
   User? harvestOperator;
   User harvestManager;
-  num? targetKilosToHarvest;
+  double? targetKilosToHarvest;
   int? priority;
   String status;
   String mainTaskRef;

@@ -13,7 +13,7 @@ class CreateNewProcTaskReq {
   @JsonKey(name: 'main_task_ref')
   String mainTaskRef;
   @JsonKey(name: 'processed_kilos')
-  int killos;
+  double killos;
   String status;
 
   CreateNewProcTaskReq({
