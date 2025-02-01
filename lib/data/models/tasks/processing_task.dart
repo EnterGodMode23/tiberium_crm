@@ -35,7 +35,7 @@ class ProcessingTask {
             ? User.fromJson(json['processing_operator'])
             : null,
         processingManager: User.fromJson(json['processing_manager']),
-        processedKilos: json['target_kilos_to_harvest'],
+        processedKilos: json['processed_kilos'],
         priority: json['priority'],
         status: json['status'],
         mainTaskRef: json['main_task_ref'],

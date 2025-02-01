@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tiberium_crm/data/models/tasks/processing_task.dart';
+import 'package:tiberium_crm/features/schedule/widgets/operator_task_card.dart';
+import 'package:tiberium_crm/features/utils/widgets/update_task_button.dart';
 import 'package:tiberium_crm/repos/repository.dart';
 
 @RoutePage()
@@ -30,158 +32,103 @@ class _ProcessingTaskPageState extends State<ProcessingTaskPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Align(
-          alignment: Alignment.topLeft,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Text(
-              'Task Info',
-              style: Theme.of(context).textTheme.headlineMedium,
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(
+          title: Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                'Task Details',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
             ),
           ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.all(20),
+        body: SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                alignment: FractionalOffset.center,
-                padding: const EdgeInsets.all(12),
+              OperatorTaskCard(
+                destination: widget.task.destination ?? 'Unknown',
+                priority: widget.task.priority ?? 0,
+                status: widget.task.status ?? 'Unknown',
+                operator: widget.task.processingOperator,
+                targetKilos: widget.task.processedKilos?.toDouble() ?? 0,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    const Text(
-                      'Task ID:',
-                    ),
-                    Text(
-                      widget.task.uid ?? 'Unknown',
-                      style: const TextStyle(color: Colors.grey),
+                    _buildInfoRow('Task ID', widget.task.uid ?? 'Unknown'),
+                    const SizedBox(height: 16),
+                    _buildInfoRow(
+                      'Processing Manager',
+                      '${widget.task.processingManager?.firstName ?? 'Unknown name'} ${widget.task.processingManager?.lastName ?? 'Unknown lastname'}',
                     ),
                   ],
                 ),
               ),
-              Row(
-                children: [
-                  const Expanded(
-                    flex: 1,
-                    child: Text(
-                      'Type:',
-                    ),
-                  ),
-                  Expanded(
-                      flex: 1, child: Text(widget.task.runtimeType.toString())),
-                ],
-              ),
-              const Padding(padding: EdgeInsets.all(12)),
-              Row(
-                children: [
-                  const Expanded(
-                    flex: 1,
-                    child: Text(
-                      'Current status:',
-                    ),
-                  ),
-                  Expanded(flex: 1, child: Text(widget.task.status ?? 'TO_DO')),
-                ],
-              ),
-              const Padding(padding: EdgeInsets.all(12)),
-              Row(
-                children: [
-                  const Expanded(
-                    flex: 1,
-                    child: Text(
-                      'Target Destination:',
-                    ),
-                  ),
-                  Expanded(
-                      flex: 1,
-                      child: Text(widget.task.destination ?? 'Unknown')),
-                ],
-              ),
-              const Padding(padding: EdgeInsets.all(12)),
-              Row(
-                children: [
-                  const Expanded(
-                    flex: 1,
-                    child: Text(
-                      'Operator:',
-                    ),
-                  ),
-                  Expanded(
-                      flex: 1,
-                      child:
-                          Text('${widget.task.processingOperator?.firstName} '
-                              '${widget.task.processingOperator?.lastName}')),
-                ],
-              ),
-              const Padding(padding: EdgeInsets.all(12)),
-              Row(
-                children: [
-                  const Expanded(
-                    flex: 1,
-                    child: Text(
-                      'Priority:',
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Text(widget.task.priority.toString()),
-                  ),
-                ],
-              ),
-              const Padding(padding: EdgeInsets.all(12)),
-              Row(
-                children: [
-                  const Expanded(
-                    flex: 1,
-                    child: Text(
-                      'Creation date:',
-                    ),
-                  ),
-                  Expanded(
-                      flex: 1, child: Text(widget.task.created ?? 'Unknown')),
-                ],
-              ),
-              const Padding(padding: EdgeInsets.all(20)),
               if ((currRole == 'HARVEST_OPERATOR' ||
-                      currRole == 'PROCESSING_OPERATOR') &&
-                  widget.task.status != 'IN_PROGRESS')
-                ElevatedButton(
-                  style: Theme.of(context).elevatedButtonTheme.style,
-                  onPressed: () async {
-                    final res = await rep.patchProcessingTasks(
-                      widget.task.uid ?? 'NONE',
-                      '{"status": "IN_PROGRESS"}',
-                    );
-                    if (res.data.uid?.isNotEmpty ?? false) {
-                      print(res);
-                      AutoRouter.of(context).maybePop(true);
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return const AlertDialog(
-                            title: Text('Incorrect input'),
-                          );
-                        },
-                      );
-                      AutoRouter.of(context).maybePop(false);
-                    }
-                  },
-                  child: const Text(
-                    'Accept Task',
-                    style: TextStyle(color: Colors.black87, fontSize: 32),
+                  currRole == 'PROCESSING_OPERATOR'))
+                UpdateTaskButton(
+                  status: widget.task.status!,
+                  callback: () => _updateTaskStatus(
+                    context,
+                    widget.task.status == 'TO_DO' ? 'IN_PROGRESS' : 'DONE',
                   ),
                 ),
             ],
           ),
         ),
-      ),
-    );
+      );
+
+  Widget _buildInfoRow(String label, String value) => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[600],
+            ),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      );
+
+  Future<void> _updateTaskStatus(BuildContext context, String status) async {
+    try {
+      final res = await rep.patchProcessingTasks(
+        widget.task.uid ?? '',
+        '{"status": "$status"}',
+      );
+      if (res.data.uid?.isNotEmpty ?? false) {
+        if (mounted) {
+          AutoRouter.of(context).pop(true);
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text('Error'),
+            content: Text('Failed to update task status: $e'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+    }
   }
 }

@@ -4,7 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tiberium_crm/data/models/role_enum.dart';
 import 'package:tiberium_crm/features/schedule/widgets/main_task_entry.dart';
-import 'package:tiberium_crm/features/schedule/widgets/task_entry.dart';
+import 'package:tiberium_crm/features/schedule/widgets/harvest_task_entry.dart';
 import 'package:tiberium_crm/features/schedule/widgets/processing_task_entry.dart';
 import 'package:tiberium_crm/features/utils/widgets/empty_tasks_list.dart';
 import 'package:tiberium_crm/repos/repository.dart';
@@ -78,6 +78,7 @@ class _SchedulePageState extends State<SchedulePage> {
     final list = await rep.getMainTasks();
 
     if (mounted) {
+      mainTasks.clear();
       setState(
         () => mainTasks.addAll(
           list.data.map(
@@ -95,6 +96,7 @@ class _SchedulePageState extends State<SchedulePage> {
     final list = await rep.getHarvestTasks();
 
     if (mounted) {
+      harvestTasks.clear();
       setState(
         () => harvestTasks.addAll(
           list.harvestTasks?.map(
@@ -113,6 +115,7 @@ class _SchedulePageState extends State<SchedulePage> {
     final list = await rep.getProcessingTasks();
 
     if (mounted) {
+      procTasks.clear();
       setState(
         () => procTasks.addAll(
           list.processingTasks?.map(

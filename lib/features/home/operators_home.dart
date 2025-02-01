@@ -7,6 +7,7 @@ import 'package:tiberium_crm/features/app/routing/app_router.dart';
 import 'package:tiberium_crm/features/schedule/widgets/operator_task_card.dart';
 import 'package:tiberium_crm/features/utils/widgets/empty_tasks_list.dart';
 import 'package:tiberium_crm/features/utils/widgets/task_info_row.dart';
+import 'package:tiberium_crm/features/utils/widgets/update_task_button.dart';
 import 'package:tiberium_crm/repos/repository.dart';
 
 class OperatorsHome extends StatefulWidget {
@@ -60,32 +61,25 @@ class _OperatorsHomeState extends State<OperatorsHome> {
                 ],
               ),
             ),
-            if (status != 'DONE')
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: ElevatedButton(
-                  onPressed: () => _updateTaskStatus(
-                    context,
-                    status == 'TO_DO' ? 'IN_PROGRESS' : 'DONE',
-                  ),
-                  child: Text(
-                    '${status == 'TO_DO' ? 'Start' : 'Finish'} Task',
-                    style: const TextStyle(fontSize: 32, color: Colors.black),
-                  ),
-                ),
+            UpdateTaskButton(
+              status: status!,
+              callback: () => _updateTaskStatus(
+                context,
+                status == 'TO_DO' ? 'IN_PROGRESS' : 'DONE',
               ),
+            ),
           ],
         )
       : const EmptyTasksList();
 
   Future<void> _updateTaskStatus(BuildContext context, String status) async {
+    final statusBody = '{"status": "$status"}';
     try {
-      final res = await rep.patchHarvestTasks(
-        uid!,
-        '{"status": "$status"}',
-      );
+      final res = widget.role == Role.harvestOperator
+          ? (await rep.patchHarvestTasks(uid!, statusBody)).data.uid
+          : (await rep.patchProcessingTasks(uid!, statusBody)).data.uid;
       _getTaskDetails();
-      if (res.data.uid.isNotEmpty && mounted) {
+      if ((res?.isNotEmpty ?? false) && mounted) {
         AutoRouter.of(context).replaceAll([const ScheduleRoute()]);
       }
     } catch (e) {
@@ -109,7 +103,10 @@ class _OperatorsHomeState extends State<OperatorsHome> {
 
   Future<void> _getTaskDetails() async {
     if (widget.role == Role.harvestOperator) {
-      final tasks = (await rep.getHarvestTasks()).harvestTasks;
+      final tasks = (await rep.getHarvestTasks())
+          .harvestTasks
+          ?.where((task) => task.status != 'DONE');
+
       if (tasks?.isNotEmpty ?? false) {
         final lastTask = tasks!.last;
         destination = lastTask.destination;
@@ -121,7 +118,10 @@ class _OperatorsHomeState extends State<OperatorsHome> {
         amount = lastTask.targetKilosToHarvest;
       }
     } else {
-      final tasks = (await rep.getProcessingTasks()).processingTasks;
+      final tasks = (await rep.getProcessingTasks())
+          .processingTasks
+          ?.where((task) => task.status != 'DONE');
+
       if (tasks?.isNotEmpty ?? false) {
         final lastTask = tasks!.last;
         destination = lastTask.destination;

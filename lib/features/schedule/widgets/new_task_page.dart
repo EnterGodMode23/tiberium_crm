@@ -31,7 +31,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
   final rep = GetIt.I.get<Repository>();
   late String currOperatorId;
   String? currMainTaskRef;
-  String? currHarvestTaskId;
+  HarvestTask? currHarvestTask;
   String? destination;
 
   List<DropdownMenuItem<User>> users = [];
@@ -121,9 +121,9 @@ class _NewTaskPageState extends State<NewTaskPage> {
                             ),
                           )
                         : FormBuilderDropdown(
-                            name: 'harvestTaskId',
+                            name: 'harvsetTaskId',
                             onChanged: (value) =>
-                                setState(() => currHarvestTaskId = value?.uid),
+                                setState(() => currHarvestTask = value),
                             items: harvestTasks,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
@@ -230,11 +230,14 @@ class _NewTaskPageState extends State<NewTaskPage> {
     try {
       final res = await rep.postProcessingTask(
         CreateNewProcTaskReq(
-          harvestTaskId: currHarvestTaskId ?? 'Unknown',
+          harvestTaskId: currHarvestTask?.uid ?? 'Unknown',
           processingOperator: currOperatorId,
-          destination: destination ?? 'Unknown',
+          destination: (widget.currRole == Role.processingManager
+                  ? currHarvestTask?.destination
+                  : destination) ??
+              'Unknown destination',
           priority: _taskFormKey.currentState!.value['priority'],
-          mainTaskRef: currMainTaskRef ?? 'Unknown main task ref',
+          mainTaskRef: currHarvestTask?.mainTaskRef ?? 'Unknown main task ref',
           killos: double.parse(_taskFormKey.currentState!.value['kilos']),
           status: 'TO_DO',
         ),
@@ -306,7 +309,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
       setState(() => mainTasks = items);
     }
 
-    if (widget.currRole == Role.processingManager) _getHarvestTasks();
+    _getHarvestTasks();
   }
 
   Future<void> _getHarvestTasks() async {

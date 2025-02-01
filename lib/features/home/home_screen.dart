@@ -8,7 +8,7 @@ import 'package:tiberium_crm/features/home/operators_home.dart';
 import 'package:tiberium_crm/features/home/sales_home.dart';
 import 'package:tiberium_crm/features/home/managers_home.dart';
 import 'package:tiberium_crm/features/schedule/widgets/main_task_entry.dart';
-import 'package:tiberium_crm/features/schedule/widgets/task_entry.dart';
+import 'package:tiberium_crm/features/schedule/widgets/harvest_task_entry.dart';
 import 'package:tiberium_crm/features/schedule/widgets/processing_task_entry.dart';
 import 'package:tiberium_crm/repos/repository.dart';
 

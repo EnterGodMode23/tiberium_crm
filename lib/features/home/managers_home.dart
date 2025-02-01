@@ -4,7 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:tiberium_crm/data/models/role_enum.dart';
 import 'package:tiberium_crm/features/app/routing/app_router.dart';
 import 'package:tiberium_crm/features/schedule/widgets/processing_task_entry.dart';
-import 'package:tiberium_crm/features/schedule/widgets/task_entry.dart';
+import 'package:tiberium_crm/features/schedule/widgets/harvest_task_entry.dart';
 import 'package:tiberium_crm/features/utils/widgets/empty_tasks_list.dart';
 import 'package:tiberium_crm/repos/repository.dart';
 

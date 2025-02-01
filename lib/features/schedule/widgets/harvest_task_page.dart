@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tiberium_crm/data/models/tasks/harvest_task.dart';
 import 'package:tiberium_crm/features/schedule/widgets/operator_task_card.dart';
+import 'package:tiberium_crm/features/utils/widgets/update_task_button.dart';
 import 'package:tiberium_crm/repos/repository.dart';
 
 @RoutePage()
@@ -62,24 +63,18 @@ class _HarvestTaskPageState extends State<HarvestTaskPage> {
                     const SizedBox(height: 16),
                     _buildInfoRow(
                       'Harvest Manager',
-                      widget.task.harvestManager != null
-                          ? '${widget.task.harvestManager?.firstName} ${widget.task.harvestManager?.lastName}'
-                          : 'Not assigned',
+                      '${widget.task.harvestManager.firstName} ${widget.task.harvestManager.lastName}',
                     ),
                   ],
                 ),
               ),
               if ((currRole == 'HARVEST_OPERATOR' ||
-                      currRole == 'PROCESSING_OPERATOR') &&
-                  widget.task.status != 'IN_PROGRESS')
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: ElevatedButton(
-                    onPressed: () => _updateTaskStatus(context),
-                    child: const Text(
-                      'Start Task',
-                      style: TextStyle(fontSize: 32),
-                    ),
+                  currRole == 'PROCESSING_OPERATOR'))
+                UpdateTaskButton(
+                  status: widget.task.status,
+                  callback: () => _updateTaskStatus(
+                    context,
+                    widget.task.status == 'TO_DO' ? 'IN_PROGRESS' : 'DONE',
                   ),
                 ),
             ],
@@ -107,11 +102,11 @@ class _HarvestTaskPageState extends State<HarvestTaskPage> {
         ],
       );
 
-  Future<void> _updateTaskStatus(BuildContext context) async {
+  Future<void> _updateTaskStatus(BuildContext context, String status) async {
     try {
       final res = await rep.patchHarvestTasks(
         widget.task.uid,
-        '{"status": "IN_PROGRESS"}',
+        '{"status": "$status"}',
       );
       if (res.data.uid.isNotEmpty) {
         if (mounted) {
