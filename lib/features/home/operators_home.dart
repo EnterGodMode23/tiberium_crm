@@ -18,8 +18,11 @@ class OperatorsHome extends StatefulWidget {
   State<OperatorsHome> createState() => _OperatorsHomeState();
 }
 
-class _OperatorsHomeState extends State<OperatorsHome> {
+class _OperatorsHomeState extends State<OperatorsHome>
+    with AutoRouteAwareStateMixin {
   final rep = GetIt.I.get<Repository>();
+
+  AutoRouteObserver? _routeObserver;
 
   String? destination;
   int? priority;
@@ -34,6 +37,19 @@ class _OperatorsHomeState extends State<OperatorsHome> {
     _getTaskDetails();
     super.initState();
   }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _routeObserver =
+        RouterScope.of(context).firstObserverOfType<AutoRouteObserver>();
+    if (_routeObserver != null) {
+      _routeObserver!.subscribe(this, context.routeData);
+    }
+  }
+
+  @override
+  void didChangeTabRoute(TabPageRoute previousRoute) => _getTaskDetails();
 
   @override
   Widget build(BuildContext context) => destination != null

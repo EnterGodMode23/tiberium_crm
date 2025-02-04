@@ -1,4 +1,5 @@
 import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,7 +18,8 @@ class SchedulePage extends StatefulWidget {
   State<SchedulePage> createState() => _SchedulePageState();
 }
 
-class _SchedulePageState extends State<SchedulePage> {
+class _SchedulePageState extends State<SchedulePage>
+    with AutoRouteAwareStateMixin {
   late final Role currRole;
 
   final SharedPreferences localStorage = GetIt.I.get();
@@ -27,12 +29,27 @@ class _SchedulePageState extends State<SchedulePage> {
   List<ProcessingTaskEntry> procTasks = [];
   List<MainTaskEntry> mainTasks = [];
 
+  AutoRouteObserver? _routeObserver;
+
   @override
   void initState() {
     currRole = _getCurrRole();
     _getTasks();
     super.initState();
   }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _routeObserver =
+        RouterScope.of(context).firstObserverOfType<AutoRouteObserver>();
+    if (_routeObserver != null) {
+      _routeObserver!.subscribe(this, context.routeData);
+    }
+  }
+
+  @override
+  void didChangeTabRoute(TabPageRoute previousRoute) => _getTasks();
 
   @override
   Widget build(BuildContext context) => Scaffold(

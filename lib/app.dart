@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,7 +38,9 @@ class _AppState extends State<App> {
         future: _future,
         builder: (context, snap) => MaterialApp.router(
           theme: Themes.light,
-          routerDelegate: router.delegate(),
+          routerDelegate: router.delegate(
+            navigatorObservers: () => <NavigatorObserver>[AutoRouteObserver()],
+          ),
           routeInformationParser: router.defaultRouteParser(),
         ),
       );

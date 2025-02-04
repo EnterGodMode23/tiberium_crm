@@ -15,17 +15,32 @@ class SalesHome extends StatefulWidget {
   State<SalesHome> createState() => _SalesHomeState();
 }
 
-class _SalesHomeState extends State<SalesHome> {
+class _SalesHomeState extends State<SalesHome> with AutoRouteAwareStateMixin {
   final rep = GetIt.I.get<Repository>();
   List<Widget> mainTasks = [];
   List<Widget> procTasks = [];
   List<Widget> harvTasks = [];
+
+  AutoRouteObserver? _routeObserver;
 
   @override
   void initState() {
     _getTasks();
     super.initState();
   }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _routeObserver =
+        RouterScope.of(context).firstObserverOfType<AutoRouteObserver>();
+    if (_routeObserver != null) {
+      _routeObserver!.subscribe(this, context.routeData);
+    }
+  }
+
+  @override
+  void didChangeTabRoute(TabPageRoute previousRoute) => _getTasks();
 
   @override
   Widget build(BuildContext context) => _isTasksListsEmpty()
