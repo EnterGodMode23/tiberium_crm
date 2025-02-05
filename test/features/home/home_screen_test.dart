@@ -52,7 +52,7 @@ void main() {
       expect(find.byType(SalesHome), findsNothing);
     });
 
-    testWidgets('shows manager view when user is harvest manager',
+    testWidgets('shows manager view when user is manager',
         (WidgetTester tester) async {
       // Arrange
       when(mockPrefs.getString('role'))

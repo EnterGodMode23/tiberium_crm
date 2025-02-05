@@ -64,6 +64,7 @@ class _NewPlanPageState extends State<NewPlanPage> {
                   children: [
                     const SizedBox(height: 16),
                     FormBuilderDropdown(
+                      key: const Key('harvest_manager_id'),
                       name: 'harvest_manager_id',
                       onChanged: (value) =>
                           currHarvestUid = value?.uid ?? 'Unknown',
@@ -84,6 +85,7 @@ class _NewPlanPageState extends State<NewPlanPage> {
                     ),
                     const SizedBox(height: 16),
                     FormBuilderDropdown(
+                      key: const Key('proc_manager_id'),
                       name: 'proc_manager_id',
                       onChanged: (value) =>
                           currProcessingUid = value?.uid ?? 'Unknown',
@@ -104,6 +106,7 @@ class _NewPlanPageState extends State<NewPlanPage> {
                     ),
                     const SizedBox(height: 16),
                     FormBuilderTextField(
+                      key: const Key('amount'),
                       name: 'amount',
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
@@ -129,6 +132,7 @@ class _NewPlanPageState extends State<NewPlanPage> {
                     ),
                     const SizedBox(height: 16),
                     FormBuilderTextField(
+                      key: const Key('destination'),
                       name: 'destination',
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
@@ -147,6 +151,7 @@ class _NewPlanPageState extends State<NewPlanPage> {
                     ),
                     const SizedBox(height: 16),
                     FormBuilderDropdown(
+                      key: const Key('priority'),
                       name: 'priority',
                       decoration: InputDecoration(
                         border: OutlineInputBorder(

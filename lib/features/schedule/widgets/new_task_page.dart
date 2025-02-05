@@ -74,6 +74,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
                 Column(
                   children: [
                     FormBuilderDropdown(
+                      key: const Key('operator'),
                       name: 'operator',
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
@@ -141,6 +142,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
                           ),
                     const SizedBox(height: 16),
                     FormBuilderDropdown(
+                      key: const Key('priority'),
                       name: 'priority',
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
@@ -172,6 +174,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
                     ),
                     const SizedBox(height: 16),
                     FormBuilderTextField(
+                      key: const Key('kilos'),
                       name: 'kilos',
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
