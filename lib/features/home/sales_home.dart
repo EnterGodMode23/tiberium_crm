@@ -43,43 +43,43 @@ class _SalesHomeState extends State<SalesHome> with AutoRouteAwareStateMixin {
   void didChangeTabRoute(TabPageRoute previousRoute) => _getTasks();
 
   @override
-  Widget build(BuildContext context) => _isTasksListsEmpty()
-      ? const EmptyTasksList()
-      : Stack(
-          children: [
-            SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SectionHeader('Main Tasks'),
-                  ...mainTasks,
-                  const SizedBox(height: 16),
-                  if (harvTasks.isNotEmpty)
-                    const SectionHeader('Harvest Tasks'),
-                  ...harvTasks,
-                  const SizedBox(height: 16),
-                  if (procTasks.isNotEmpty)
-                    const SectionHeader('Processing Tasks'),
-                  ...procTasks,
-                  const SizedBox(height: 80),
-                ],
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ElevatedButton(
-                  style: Theme.of(context).elevatedButtonTheme.style,
-                  onPressed: () => _newPlan(context),
-                  child: const Text(
-                    'New',
-                    style: TextStyle(color: Colors.black87, fontSize: 32),
+  Widget build(BuildContext context) => Stack(
+        children: [
+          _isTasksListsEmpty()
+              ? const EmptyTasksList()
+              : SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const SectionHeader('Main Tasks'),
+                      ...mainTasks,
+                      const SizedBox(height: 16),
+                      if (harvTasks.isNotEmpty)
+                        const SectionHeader('Harvest Tasks'),
+                      ...harvTasks,
+                      const SizedBox(height: 16),
+                      if (procTasks.isNotEmpty)
+                        const SectionHeader('Processing Tasks'),
+                      ...procTasks,
+                      const SizedBox(height: 80),
+                    ],
                   ),
+                ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                style: Theme.of(context).elevatedButtonTheme.style,
+                onPressed: () => _newPlan(context),
+                child: const Text(
+                  'New',
+                  style: TextStyle(color: Colors.black87, fontSize: 32),
                 ),
               ),
             ),
-          ],
-        );
+          ),
+        ],
+      );
 
   Future<void> _newPlan(BuildContext context) async {
     try {
